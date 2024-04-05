@@ -4,11 +4,11 @@ import clsx from "clsx";
 import { motion } from "framer-motion";
 import { useMemo, useState } from "react";
 import {
-  IoCheckmarkCircle,
-  IoCheckmarkDoneCircle,
-  IoTimeSharp,
+  IoCheckmarkCircleOutline,
+  IoCheckmarkDoneCircleOutline,
+  IoTimeOutline
 } from "react-icons/io5";
-import { TiArrowBack } from "react-icons/ti";
+import { TiArrowBackOutline } from "react-icons/ti";
 import { Button } from "./ui/button";
 const MAX_NUMBER_OF_CARDS_SHOWN = 7;
 const spring = {
@@ -45,6 +45,14 @@ export const CardStack = ({
 
   return (
     <div className="w-full h-full">
+      <h2 className="text-lg text-left mb-2">
+        {cards.length === totalNumberOfCards
+          ? LL.NUM_CARDS_SCHEDULED(totalNumberOfCards)
+          : LL.OF_NUM_CARDS_DONE({
+              numDone: totalNumberOfCards - cards.length,
+              numTotal: totalNumberOfCards,
+            })}
+      </h2>
       <Progress value={100 * (1 - cards.length / totalNumberOfCards)} />
       <div className="relative h-64 w-full sm:mx-auto sm:h-52 sm:w-80 md:h-60 md:w-96 mt-[4rem]">
         {cards.length === 0 && <div>{LL.STUDY.NO_CARDS()}</div>}
@@ -169,28 +177,28 @@ const ANSWER_OPTIONS = [
     color: "#ef4c4f",
     bg: "#fcddde",
     darkBg: "#311112",
-    icon: TiArrowBack,
+    icon: TiArrowBackOutline,
   },
   {
     name: "HARD",
     color: "#f49953",
     bg: "#fdecdf",
     darkBg: "#322013",
-    icon: IoTimeSharp,
+    icon: IoTimeOutline,
   },
   {
     name: "GOOD",
     color: "#36ed88",
     bg: "#d9fce9",
     darkBg: "#0e301d",
-    icon: IoCheckmarkCircle,
+    icon: IoCheckmarkCircleOutline,
   },
   {
     name: "EASY",
-    color: "#55fc5b",
+    color: "#31dd0b",
     bg: "#dffee0",
     darkBg: "#143214",
-    icon: IoCheckmarkDoneCircle,
+    icon: IoCheckmarkDoneCircleOutline,
   },
 ] as const;
 type AnswerOption = (typeof ANSWER_OPTIONS)[number]["name"];
@@ -253,10 +261,10 @@ function AnswerBar(props: {
                 setSelected(undefined);
               }
             }}
-            transition={{ duration: 0.25 }}
+            transition={{ duration: 0.4 }}
             animate={
               selected === answerOption.name
-                ? { scale: 1.25, y: -100 }
+                ? { scale: 1.15, y: -100 }
                 : selected === undefined
                 ? { scale: 1 }
                 : { opacity: 0 }
@@ -266,7 +274,12 @@ function AnswerBar(props: {
               props.onAnswer(answerOption.name);
             }}
           >
-            {answerOption.icon({ size: 32, color: answerOption.color })}
+            {answerOption.icon({
+              size: 32,
+              // Note: Those only work because they are also used above;
+              // Otherwise tailwind would not pick them up
+              className: "text-[var(--color-bg-dark)] dark:text-[var(--color)]",
+            })}
             {LL.STUDY.ANSWER_OPTIONS[answerOption.name]()}
           </motion.button>
         ))}

@@ -6,7 +6,7 @@ export const Route = createLazyFileRoute("/study")({
   component: Study,
 });
 
-const CARDS = Array(100)
+const CARDS = Array(10)
   .fill(1)
   .map((_, i) => ({
     id: i,
@@ -41,8 +41,7 @@ function Study() {
         {LL.ROUTES.STUDY()}
       </h1>
       <div className="h-full w-full">
-        <h2 className="text-lg">{LL.NUM_CARDS_SCHEDULED(CARDS.length)}</h2>
-        <div className="mt-4 text-center w-full max-w-xl">
+        <div className="text-center w-full max-w-xl">
           <CardStack items={CARDS} />
         </div>
       </div>

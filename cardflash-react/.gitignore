@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# TODO: Decide on how to handle bundled PDF-JS
+public/pdfjs

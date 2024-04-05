@@ -46,6 +46,12 @@ type RootTranslation = {
 	 */
 	NUM_CARDS_SCHEDULED: RequiredParams<'0'>
 	/**
+	 * {​n​u​m​D​o​n​e​}​ ​o​f​ ​{​n​u​m​T​o​t​a​l​}​ ​c​a​r​d​s​ ​d​o​n​e
+	 * @param {unknown} numDone
+	 * @param {unknown} numTotal
+	 */
+	OF_NUM_CARDS_DONE: RequiredParams<'numDone' | 'numTotal'>
+	/**
 	 * L​a​n​g​u​a​g​e
 	 */
 	LANGUAGE: string
@@ -103,6 +109,18 @@ type RootTranslation = {
 		 */
 		NOT_FOUND: string
 	}
+	COMPONENTS: {
+		FILE_DROP_ZONE: {
+			/**
+			 * C​l​i​c​k​ ​t​o​ ​s​e​l​e​c​t​ ​a​ ​f​i​l​e
+			 */
+			CLICK_TO_SELECT: string
+			/**
+			 * o​r​ ​d​r​a​g​ ​a​n​d​ ​d​r​o​p
+			 */
+			OR_DROP: string
+		}
+	}
 }
 
 export type TranslationFunctions = {
@@ -136,6 +154,10 @@ export type TranslationFunctions = {
 	 * {0} cards scheduled
 	 */
 	NUM_CARDS_SCHEDULED: (arg0: unknown) => LocalizedString
+	/**
+	 * {numDone} of {numTotal} cards done
+	 */
+	OF_NUM_CARDS_DONE: (arg: { numDone: unknown, numTotal: unknown }) => LocalizedString
 	/**
 	 * Language
 	 */
@@ -193,6 +215,18 @@ export type TranslationFunctions = {
 		 * Not Found
 		 */
 		NOT_FOUND: () => LocalizedString
+	}
+	COMPONENTS: {
+		FILE_DROP_ZONE: {
+			/**
+			 * Click to select a file
+			 */
+			CLICK_TO_SELECT: () => LocalizedString
+			/**
+			 * or drag and drop
+			 */
+			OR_DROP: () => LocalizedString
+		}
 	}
 }
 

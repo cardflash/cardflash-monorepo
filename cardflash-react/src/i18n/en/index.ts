@@ -33,9 +33,9 @@ const en = {
   COMPONENTS: {
     FILE_DROP_ZONE: {
       CLICK_TO_SELECT: "Click to select a file",
-      OR_DROP: "or drag and drop"
-    }
-  }
+      OR_DROP: "or drag and drop",
+    },
+  },
 } satisfies BaseTranslation;
 
 export default en;

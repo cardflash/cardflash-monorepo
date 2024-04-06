@@ -76,3 +76,9 @@ body {
     --radius: 0.4rem;
   }
 }
+
+.ProseMirror.bn-editor {
+  height: 100%;
+  min-height: 15rem;
+  @apply border dark:border-slate-700 rounded-sm;
+}

@@ -9,6 +9,7 @@ import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
 import { TooltipProvider } from "./components/ui/tooltip";
 import { detectLocale } from "./i18n/i18n-util";
+import { CARDS, Card, CardContext } from "./card-context";
 
 // Create a new router instance
 const router = createRouter({ routeTree });
@@ -25,6 +26,7 @@ export default function App() {
     (localStorage.getItem(LOCAL_STORAGE_LANG_KEY) as Locales | null) ||
     detectLocale(navigatorDetector);
 
+  const [cards, setCards] = useState<Card[]>(CARDS);
   const [localesLoaded, setLocalesLoaded] = useState(false);
   useEffect(() => {
     loadLocaleAsync(locale as Locales).then(() => setLocalesLoaded(true));
@@ -37,7 +39,9 @@ export default function App() {
   return (
     <TooltipProvider>
       <TypesafeI18n locale={locale}>
-        <RouterProvider router={router} />
+        <CardContext.Provider value={{ cards, updateCards: setCards }}>
+          <RouterProvider router={router} />
+        </CardContext.Provider>
         {/* <TanStackRouterDevtools position="top-right" /> */}
       </TypesafeI18n>
     </TooltipProvider>

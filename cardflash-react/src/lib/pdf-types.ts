@@ -3,7 +3,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import type { PDFDocumentLoadingTask, PDFDocumentProxy } from "pdfjs-dist";
-import type { PDFRenderingQueue, PDFThumbnailViewer } from "pdfjs-dist/types/web/pdf_thumbnail_viewer";
+import type {
+  PDFRenderingQueue,
+  PDFThumbnailViewer,
+} from "pdfjs-dist/types/web/pdf_thumbnail_viewer";
 import type {
   DownloadManager,
   EventBus,

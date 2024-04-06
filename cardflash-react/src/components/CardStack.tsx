@@ -6,22 +6,17 @@ import { useMemo, useState } from "react";
 import {
   IoCheckmarkCircleOutline,
   IoCheckmarkDoneCircleOutline,
-  IoTimeOutline
+  IoTimeOutline,
 } from "react-icons/io5";
 import { TiArrowBackOutline } from "react-icons/ti";
 import { Button } from "./ui/button";
+import { Card } from "@/card-context";
 const MAX_NUMBER_OF_CARDS_SHOWN = 7;
 const spring = {
   type: "spring",
   stiffness: 300,
   damping: 40,
   duration: 1.0,
-};
-
-type Card = {
-  id: number | string;
-  front: React.ReactNode;
-  back: React.ReactNode;
 };
 
 export const CardStack = ({
@@ -54,7 +49,7 @@ export const CardStack = ({
             })}
       </h2>
       <Progress value={100 * (1 - cards.length / totalNumberOfCards)} />
-      <div className="relative h-64 w-full sm:mx-auto sm:h-52 sm:w-80 md:h-60 md:w-96 mt-[4rem]">
+      <div className="relative h-64 w-[25rem] mx-auto max-w-full sm:mx-auto sm:h-52 sm:w-80 md:h-60 md:w-96 xl:w-[32rem] xl:h-[21rem] mt-[4rem]">
         {cards.length === 0 && <div>{LL.STUDY.NO_CARDS()}</div>}
         {cards.map((card, index) =>
           index > MAX_NUMBER_OF_CARDS_SHOWN ? null : (
@@ -114,7 +109,15 @@ export const CardStack = ({
                     <h2 className="text-3xl font-semibold">
                       {LL.STUDY.QUESTION()}
                     </h2>
-                    <div className="pl-1 pt-1">{card.front}</div>
+                    {typeof card.front === "string" && (
+                      <div
+                        className="pl-1 pt-1 max-h-full"
+                        dangerouslySetInnerHTML={{ __html: card.front }}
+                      ></div>
+                    )}
+                    {typeof card.front !== "string" && (
+                      <div className="pl-1 pt-1 max-h-full">{card.front}</div>
+                    )}
                   </motion.div>
                   <motion.div
                     className="border p-2 h-full overflow-auto text-left rounded-lg border-gray-300 dark:border-slate-700 bg-green-50 dark:bg-slate-900 shadow-lg"
@@ -132,7 +135,15 @@ export const CardStack = ({
                     <h2 className="text-3xl font-semibold">
                       {LL.STUDY.ANSWER()}
                     </h2>
-                    <div className="pl-1 pt-1 max-h-full">{card.back}</div>
+                    {typeof card.back === "string" && (
+                      <div
+                        className="pl-1 pt-1 max-h-full"
+                        dangerouslySetInnerHTML={{ __html: card.back }}
+                      ></div>
+                    )}
+                    {typeof card.back !== "string" && (
+                      <div className="pl-1 pt-1 max-h-full">{card.back}</div>
+                    )}
                   </motion.div>
                 </div>
               </motion.div>

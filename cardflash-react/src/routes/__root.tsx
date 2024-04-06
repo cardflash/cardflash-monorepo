@@ -48,7 +48,7 @@ function Root() {
   ] as const;
   return (
     <div className="h-full flex flex-col lg:flex-row-reverse">
-      <main className="h-full w-full overflow-auto pt-8 px-8 text-left">
+      <main className="h-full w-full overflow-auto pt-0 px-4 text-left">
         <Outlet />
       </main>
       <div>

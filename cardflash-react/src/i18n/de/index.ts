@@ -33,9 +33,9 @@ const de = {
   COMPONENTS: {
     FILE_DROP_ZONE: {
       CLICK_TO_SELECT: "Datei auswählen",
-      OR_DROP: "oder drag-and-drop"
-    }
-  }
+      OR_DROP: "oder drag-and-drop",
+    },
+  },
 } satisfies Translation;
 
 export default de;

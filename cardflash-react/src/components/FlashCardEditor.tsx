@@ -11,11 +11,16 @@ export default function FlashCardEditor() {
   const backEditorRef = useRef<BlockNoteEditor<DefaultBlockSchema>>();
   return (
     <div>
-      <div className="flex flex-col lg:flex-row gap-1 w-full justify-center items-center  max-w-xl mx-auto">
-        <Label className="mr-auto">Front</Label>
-        <BlockEditor editorCallback={(ed) => (frontEditorRef.current = ed)} />
-        <Label className="mr-auto mt-2">Back</Label>
-        <BlockEditor editorCallback={(ed) => (backEditorRef.current = ed)} />
+      <div className="flex flex-col lg:flex-row gap-1 w-full justify-center items-center max-w-xl mx-auto">
+        <div className="h-full w-full">
+          <Label className="mr-auto text-lg">Front</Label>
+          <BlockEditor editorCallback={(ed) => (frontEditorRef.current = ed)} />
+        </div>
+
+        <div className="h-full w-full">
+          <Label className="mr-auto mt-2 lg:mt-0 text-lg">Back</Label>
+          <BlockEditor editorCallback={(ed) => (backEditorRef.current = ed)} />
+        </div>
       </div>
       <Button
         className="block mx-auto mt-4"

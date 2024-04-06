@@ -37,6 +37,10 @@ type RootTranslation = {
 	 */
 	WELCOME: string
 	/**
+	 * A​d​d
+	 */
+	ADD: string
+	/**
 	 * C​a​r​d​s
 	 */
 	CARDS: string
@@ -121,6 +125,16 @@ type RootTranslation = {
 			OR_DROP: string
 		}
 	}
+	CARD_EDITOR: {
+		/**
+		 * F​r​o​n​t
+		 */
+		FRONT: string
+		/**
+		 * B​a​c​k
+		 */
+		BACK: string
+	}
 }
 
 export type TranslationFunctions = {
@@ -146,6 +160,10 @@ export type TranslationFunctions = {
 	 * Welcome!
 	 */
 	WELCOME: () => LocalizedString
+	/**
+	 * Add
+	 */
+	ADD: () => LocalizedString
 	/**
 	 * Cards
 	 */
@@ -227,6 +245,16 @@ export type TranslationFunctions = {
 			 */
 			OR_DROP: () => LocalizedString
 		}
+	}
+	CARD_EDITOR: {
+		/**
+		 * Front
+		 */
+		FRONT: () => LocalizedString
+		/**
+		 * Back
+		 */
+		BACK: () => LocalizedString
 	}
 }
 

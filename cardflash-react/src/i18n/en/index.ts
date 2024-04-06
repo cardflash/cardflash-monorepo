@@ -8,6 +8,7 @@ const en = {
     SETTINGS: "Settings",
   },
   WELCOME: "Welcome!",
+  ADD: "Add",
   CARDS: "Cards",
   NUM_CARDS_SCHEDULED: "{0} cards scheduled",
   OF_NUM_CARDS_DONE: "{numDone} of {numTotal} cards done",
@@ -35,6 +36,10 @@ const en = {
       CLICK_TO_SELECT: "Click to select a file",
       OR_DROP: "or drag and drop",
     },
+  },
+  CARD_EDITOR: {
+    FRONT: "Front",
+    BACK: "Back",
   },
 } satisfies BaseTranslation;
 

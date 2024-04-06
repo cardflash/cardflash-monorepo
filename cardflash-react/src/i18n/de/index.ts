@@ -8,6 +8,7 @@ const de = {
     SETTINGS: "Einstellungen",
   },
   WELCOME: "Willkommen!",
+  ADD: "Hinzufügen",
   CARDS: "Karteikarten",
   NUM_CARDS_SCHEDULED: "{0} Karteikarten geplant",
   OF_NUM_CARDS_DONE: "{numDone} von {numTotal} Karteikarten gelernt",
@@ -35,6 +36,10 @@ const de = {
       CLICK_TO_SELECT: "Datei auswählen",
       OR_DROP: "oder drag-and-drop",
     },
+  },
+  CARD_EDITOR: {
+    FRONT: "Vorderseite",
+    BACK: "Rückseite",
   },
 } satisfies Translation;
 

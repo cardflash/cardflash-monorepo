@@ -13,7 +13,7 @@ export default function FlashCardEditor() {
   const { LL } = useI18nContext();
   return (
     <div>
-      <div className="flex flex-col lg:flex-row gap-1 w-full justify-center items-center max-w-xl mx-auto">
+      <div className="flex flex-col lg:flex-row gap-1 w-full justify-center items-center max-w-xl lg:max-w-3xl mx-auto">
         <div className="h-full w-full">
           <Label className="mr-auto text-lg">{LL.CARD_EDITOR.FRONT()}</Label>
           <BlockEditor editorCallback={(ed) => (frontEditorRef.current = ed)} />

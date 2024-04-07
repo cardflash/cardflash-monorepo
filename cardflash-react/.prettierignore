@@ -4,3 +4,4 @@
 **/node_modules
 src/routeTree.gen.ts
 public/pdfjs
+src/i18n

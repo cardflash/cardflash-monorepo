@@ -42,7 +42,7 @@ html,
 body {
   height: 100%;
   width: 100%;
-  overflow-y: hidden;
+  overflow: hidden;
 }
 html {
   overscroll-behavior: contain;
@@ -84,4 +84,52 @@ html {
   height: 100%;
   min-height: 15rem;
   @apply border dark:border-slate-700 rounded-sm;
+}
+
+.editor-prose {
+  @apply prose prose-p:text-black dark:prose-p:text-white dark:prose-invert prose-headings:mb-0 prose-headings:mt-0 prose-pre:my-2 prose-img:my-1 prose-p:mb-0 prose-p:mt-0 prose-li:mt-0 prose-li:mb-0 prose-ul:mt-0 prose-ul:mb-0;
+}
+.editor-prose em {
+  @apply font-semibold;
+}
+.editor-prose mark {
+  @apply bg-lime-200 px-0.5;
+}
+
+.tiptap.ProseMirror {
+  height: 100%;
+  min-height: 15rem;
+  @apply border dark:border-slate-700 rounded-sm px-2;
+}
+
+@media (prefers-color-scheme: dark) {
+  .editor-prose img[alt~="Invert"] {
+    filter: invert(1);
+  }
+}
+
+.editor-prose {
+  ul[data-type="taskList"] {
+    list-style: none;
+    padding: 0;
+
+    li {
+      align-items: center;
+      display: flex;
+
+      > label {
+        flex: 0 0 auto;
+        margin-right: 0.5rem;
+        user-select: none;
+      }
+
+      > div {
+        flex: 1 1 auto;
+      }
+    }
+  }
+}
+
+.pdfViewer * {
+  box-sizing: content-box;
 }

@@ -2,7 +2,7 @@ import { Progress } from "@/components/ui/progress";
 import { useI18nContext } from "@/i18n/i18n-react";
 import clsx from "clsx";
 import { motion } from "framer-motion";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   IoCheckmarkCircleOutline,
   IoCheckmarkDoneCircleOutline,
@@ -11,6 +11,9 @@ import {
 import { TiArrowBackOutline } from "react-icons/ti";
 import { Button } from "./ui/button";
 import { Card } from "@/card-context";
+
+import "katex/dist/katex.min.css";
+import renderMathInElement from "katex/contrib/auto-render";
 const MAX_NUMBER_OF_CARDS_SHOWN = 7;
 const spring = {
   type: "spring",
@@ -38,8 +41,22 @@ export const CardStack = ({
   }, [items]);
   const { LL } = useI18nContext();
 
+  const activeCardRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (activeCardRef.current) {
+      renderMathInElement(activeCardRef.current, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false },
+          { left: "\\(", right: "\\)", display: false },
+          { left: "\\[", right: "\\]", display: true },
+        ],
+      });
+    }
+  }, [cards]);
   return (
-    <div className="w-full h-full">
+    <div className="w-full h-full" ref={activeCardRef}>
       <h2 className="text-lg text-left mb-2">
         {cards.length === totalNumberOfCards
           ? LL.NUM_CARDS_SCHEDULED(totalNumberOfCards)
@@ -49,7 +66,7 @@ export const CardStack = ({
             })}
       </h2>
       <Progress value={100 * (1 - cards.length / totalNumberOfCards)} />
-      <div className="relative h-64 w-[25rem] mx-auto max-w-full sm:mx-auto sm:h-52 sm:w-80 md:h-60 md:w-96 xl:w-[32rem] xl:h-[21rem] mt-[4rem]">
+      <div className="relative h-64 sm:h-52 md:h-60 xl:h-[21rem] w-[25rem] mx-auto max-w-full sm:mx-auto sm:w-80md:w-96 xl:w-[32rem] mt-[4rem]">
         {cards.length === 0 && <div>{LL.STUDY.NO_CARDS()}</div>}
         {cards.map((card, index) =>
           index > MAX_NUMBER_OF_CARDS_SHOWN ? null : (
@@ -95,7 +112,7 @@ export const CardStack = ({
                   }}
                 >
                   <motion.div
-                    className="border p-2 text-left rounded-lg border-gray-300 dark:border-neutral-800 bg-gray-50 dark:bg-slate-950 shadow-xl"
+                    className="border p-2 h-full overflow-auto text-left rounded-lg border-gray-300 dark:border-neutral-800 bg-gray-50 dark:bg-slate-950 shadow-xl"
                     animate={{ rotateY: flipped && index === 0 ? -180 : 0 }}
                     transition={spring}
                     style={{
@@ -106,12 +123,12 @@ export const CardStack = ({
                       position: "absolute",
                     }}
                   >
-                    <h2 className="text-3xl font-semibold">
+                    {/* <h2 className="text-3xl font-semibold mb-1">
                       {LL.STUDY.QUESTION()}
-                    </h2>
+                    </h2> */}
                     {typeof card.front === "string" && (
                       <div
-                        className="pl-1 pt-1 max-h-full"
+                        className="pl-1 pt-1 editor-prose"
                         dangerouslySetInnerHTML={{ __html: card.front }}
                       ></div>
                     )}
@@ -120,7 +137,7 @@ export const CardStack = ({
                     )}
                   </motion.div>
                   <motion.div
-                    className="border p-2 h-full overflow-auto text-left rounded-lg border-gray-300 dark:border-slate-700 bg-green-50 dark:bg-slate-900 shadow-lg"
+                    className="border p-2 h-full overflow-auto text-left rounded-lg border-gray-300 dark:border-slate-700 bg-gray-50 dark:bg-slate-900 shadow-lg"
                     initial={{ rotateY: 180 }}
                     animate={{ rotateY: flipped && index === 0 ? 0 : 180 }}
                     transition={spring}
@@ -132,17 +149,17 @@ export const CardStack = ({
                       position: "absolute",
                     }}
                   >
-                    <h2 className="text-3xl font-semibold">
+                    {/* <h2 className="text-3xl font-semibold mb-1">
                       {LL.STUDY.ANSWER()}
-                    </h2>
+                    </h2> */}
                     {typeof card.back === "string" && (
                       <div
-                        className="pl-1 pt-1 max-h-full"
+                        className="pl-1 pt-1 editor-prose"
                         dangerouslySetInnerHTML={{ __html: card.back }}
                       ></div>
                     )}
                     {typeof card.back !== "string" && (
-                      <div className="pl-1 pt-1 max-h-full">{card.back}</div>
+                      <div className="pl-1 pt-1">{card.back}</div>
                     )}
                   </motion.div>
                 </div>

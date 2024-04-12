@@ -1,15 +1,18 @@
+import { RouterProvider, createRouter } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { navigatorDetector } from "typesafe-i18n/detectors";
 import { LOCAL_STORAGE_LANG_KEY } from "./components/LanguageSelector";
+import TypesafeI18n from "./i18n/i18n-react";
 import { Locales } from "./i18n/i18n-types";
 import { loadLocaleAsync } from "./i18n/i18n-util.async";
-import { useEffect, useState } from "react";
-import TypesafeI18n from "./i18n/i18n-react";
-import { RouterProvider, createRouter } from "@tanstack/react-router";
 // Import the generated route tree
-import { routeTree } from "./routeTree.gen";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { CARDS, Card, CardContext } from "./card-context";
 import { TooltipProvider } from "./components/ui/tooltip";
 import { detectLocale } from "./i18n/i18n-util";
-import { CARDS, Card, CardContext } from "./card-context";
+import { routeTree } from "./routeTree.gen";
+
+const queryClient = new QueryClient();
 
 // Create a new router instance
 const router = createRouter({ routeTree });
@@ -39,10 +42,12 @@ export default function App() {
   return (
     <TooltipProvider>
       <TypesafeI18n locale={locale}>
-        <CardContext.Provider value={{ cards, updateCards: setCards }}>
-          <RouterProvider router={router} />
-        </CardContext.Provider>
-        {/* <TanStackRouterDevtools position="top-right" /> */}
+        <QueryClientProvider client={queryClient}>
+          <CardContext.Provider value={{ cards, updateCards: setCards }}>
+            <RouterProvider router={router} />
+          </CardContext.Provider>
+          {/* <TanStackRouterDevtools position="top-right" /> */}
+        </QueryClientProvider>
       </TypesafeI18n>
     </TooltipProvider>
   );

@@ -7,6 +7,7 @@ const en = {
     STUDY: "Study",
     SETTINGS: "Settings",
   },
+  GO_BACK: "Back",
   WELCOME: "Welcome!",
   ADD: "Add",
   CARDS: "Cards",

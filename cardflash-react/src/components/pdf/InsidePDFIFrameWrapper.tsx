@@ -39,7 +39,6 @@ function removeCanvasBG(
   }
   const colorEntries = [...colorMap.entries()];
   colorEntries.sort((a, b) => (a[1] > b[1] ? -1 : 1));
-  console.log(colorEntries);
   const colorsToReplace = [colorEntries[0]].map((c) => c[0]);
   for (let i = 0, n = pixelData.length; i < n; i += 4) {
     const r = pixelData[i],
@@ -73,11 +72,6 @@ function addImageSel(
     }
     const pageCanvas: HTMLCanvasElement = page?.canvas;
     const pageCanvasRect = pageCanvas.getBoundingClientRect();
-    console.log(
-      sel.y1,
-      pageCanvasRect.y,
-      pageCanvasRect.y + pageCanvasRect.height,
-    );
     if (pageCanvasRect.y > sel.y1 && pageCanvasRect.y > sel.y2) {
       pageIndex--;
       if (pageIndex < 0) {
@@ -111,15 +105,12 @@ function addImageSel(
       scale * width * outputScale.sx,
       scale * height * outputScale.sy,
     );
-    console.log({ imgData });
-    console.log({ scale, x, y, sel, width, height });
     const previewCtx = previewCanvas.getContext("2d")!;
     previewCanvas.width = scale * width * outputScale.sx;
     previewCanvas.height = scale * height * outputScale.sy;
     previewCtx.putImageData(imgData, 0, 0);
     removeCanvasBG(previewCtx, previewCanvas.width, previewCanvas.height);
     const dataURL = previewCanvas.toDataURL();
-    // console.log(props.onImageAdded);
     previewCanvas.width = 0;
     previewCanvas.height = 0;
     previewCtx.clearRect(0, 0, scale * width, scale * height);

@@ -7,6 +7,7 @@ const de = {
     STUDY: "Lernen",
     SETTINGS: "Einstellungen",
   },
+  GO_BACK: "Zurück",
   WELCOME: "Willkommen!",
   ADD: "Hinzufügen",
   CARDS: "Karteikarten",

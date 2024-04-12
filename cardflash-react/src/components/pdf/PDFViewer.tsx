@@ -22,7 +22,6 @@ export default function PDFViewer(props: PDFViewerProps) {
       w.document.getElementsByTagName("head")[0].removeChild(prev);
     }
     import("../../index.css?url").then((res) => {
-      console.log({ res });
       w.document
         .getElementsByTagName("head")[0]
         .insertAdjacentHTML(

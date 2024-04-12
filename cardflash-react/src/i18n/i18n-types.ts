@@ -33,6 +33,10 @@ type RootTranslation = {
 		SETTINGS: string
 	}
 	/**
+	 * B​a​c​k
+	 */
+	GO_BACK: string
+	/**
 	 * W​e​l​c​o​m​e​!
 	 */
 	WELCOME: string
@@ -156,6 +160,10 @@ export type TranslationFunctions = {
 		 */
 		SETTINGS: () => LocalizedString
 	}
+	/**
+	 * Back
+	 */
+	GO_BACK: () => LocalizedString
 	/**
 	 * Welcome!
 	 */

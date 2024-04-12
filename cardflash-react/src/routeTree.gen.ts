@@ -20,6 +20,7 @@ const StudyLazyImport = createFileRoute('/study')()
 const SettingsLazyImport = createFileRoute('/settings')()
 const DocumentsLazyImport = createFileRoute('/documents')()
 const IndexLazyImport = createFileRoute('/')()
+const DocumentsDocIDLazyImport = createFileRoute('/documents/$docID')()
 
 // Create/Update Routes
 
@@ -43,6 +44,13 @@ const IndexLazyRoute = IndexLazyImport.update({
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
 
+const DocumentsDocIDLazyRoute = DocumentsDocIDLazyImport.update({
+  path: '/documents/$docID',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() =>
+  import('./routes/documents_/$docID.lazy').then((d) => d.Route),
+)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -63,6 +71,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StudyLazyImport
       parentRoute: typeof rootRoute
     }
+    '/documents/$docID': {
+      preLoaderRoute: typeof DocumentsDocIDLazyImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -73,6 +85,7 @@ export const routeTree = rootRoute.addChildren([
   DocumentsLazyRoute,
   SettingsLazyRoute,
   StudyLazyRoute,
+  DocumentsDocIDLazyRoute,
 ])
 
 /* prettier-ignore-end */

@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@aarkue/tiptap-math-extension": "^1.2.2",
+    "@radix-ui/react-alert-dialog": "^1.0.5",
     "@radix-ui/react-context-menu": "^2.1.5",
     "@radix-ui/react-icons": "^1.3.0",
     "@radix-ui/react-label": "^2.0.2",

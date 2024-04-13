@@ -1,14 +1,20 @@
+import AlertHelper from "@/components/ui/AlertHelper";
 import FileDropZone from "@/components/ui/FileDropZone";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { useI18nContext } from "@/i18n/i18n-react";
 import {
   PDFDocument,
   createPDFDocument,
   listPDFDocuments,
+  updatePDFDocument,
 } from "@/lib/storage";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, createLazyFileRoute } from "@tanstack/react-router";
 import clsx from "clsx";
 import { BsFilePdf } from "react-icons/bs";
+import { FiEdit } from "react-icons/fi";
 export const Route = createLazyFileRoute("/documents")({
   component: DocumentPage,
 });
@@ -65,12 +71,12 @@ function DocumentOverview() {
           if (files.length > 0) {
             addDocMut.mutate({
               pdfBlob: files[0],
-              newDoc: { name: files[0].name, tags: [] },
+              newDoc: { name: files[0].name.split(".pdf")[0], tags: [] },
             });
           }
         }}
       />
-      <ul className="mt-8 flex flex-wrap gap-4">
+      <ul className="mt-8 flex flex-wrap gap-2">
         {data.map((d) => (
           <PDFDocElement key={d.id} doc={d} />
         ))}
@@ -80,21 +86,68 @@ function DocumentOverview() {
 }
 
 function PDFDocElement({ doc }: { doc: PDFDocument }) {
+  const { LL } = useI18nContext();
+  const queryClient = useQueryClient();
   return (
-    <li className="">
+    <li className="w-full flex justify-between items-center rounded-lg border bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/20 dark:hover:bg-blue-800/30 border-blue-200 hover:border-blue-300 dark:border-blue-800 dark:hover:border-blue-700  px-1">
       <Link
-        className="w-[8rem] h-[8rem] xl:w-[12rem] xl:h-[12rem] px-1 py-2 flex flex-col items-center justify-center gap-y-2 xl:gap-y-4 rounded-lg border bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/20 dark:hover:bg-blue-800/30 border-blue-200 hover:border-blue-300 dark:border-blue-800 dark:hover:border-blue-700"
         to="/documents/$docID"
         params={{ docID: doc.id }}
+        className="flex justify-left items-center w-[calc(100%-3rem)] h-full py-2"
       >
+        <BsFilePdf size={32} className="" />
         <h3
           title={doc.name}
-          className="text-xl font-bold max-w-[7rem] text-ellipsis whitespace-nowrap overflow-hidden"
+          className="text-xl font-semibold ml-2 grow-0 w-full text-ellipsis whitespace-nowrap overflow-hidden"
         >
           {doc.name}
         </h3>
-        <BsFilePdf size={32} />
       </Link>
+      <AlertHelper
+        trigger={
+          <Button
+            size="icon"
+            variant="outline"
+            title={LL.EDIT()}
+            className="shrink-0"
+          >
+            <FiEdit />
+          </Button>
+        }
+        title={LL.EDIT()}
+        initialData={doc}
+        content={({ data, setData, submit }) => (
+          <div className="grid gap-y-2">
+            <Label>{LL.NAME()}</Label>
+            <Input
+              autoFocus
+              value={data.name}
+              onChange={(ev) =>
+                setData({ ...data, name: ev.currentTarget.value })
+              }
+              onKeyDown={(ev) => {
+                if (ev.key === "Enter") {
+                  submit(ev);
+                }
+              }}
+            />
+          </div>
+        )}
+        submitAction={LL.SAVE()}
+        mode="promise"
+        onSubmit={async (data, ev) => {
+          if (data.name.length > 0) {
+            await updatePDFDocument(data);
+            await queryClient.invalidateQueries({
+              queryKey: ["pdf-documents"],
+            });
+          } else {
+            if (ev) {
+              ev.preventDefault();
+            }
+          }
+        }}
+      />
     </li>
   );
 }

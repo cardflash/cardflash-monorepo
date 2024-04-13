@@ -19,7 +19,9 @@ export default function PDFViewer(props: PDFViewerProps) {
   function addCSSToIFrameWindow(w: Window) {
     const prev = w.document.getElementById(LINK_EL_IFRAME_ID);
     if (prev) {
-      w.document.getElementsByTagName("head")[0].removeChild(prev);
+      if (w.document.getElementsByTagName("head")[0]) {
+        w.document.getElementsByTagName("head")[0].removeChild(prev);
+      }
     }
     import("../../index.css?url").then((res) => {
       w.document

@@ -45,6 +45,22 @@ type RootTranslation = {
 	 */
 	ADD: string
 	/**
+	 * E​d​i​t
+	 */
+	EDIT: string
+	/**
+	 * S​a​v​e
+	 */
+	SAVE: string
+	/**
+	 * C​a​n​c​e​l
+	 */
+	CANCEL: string
+	/**
+	 * N​a​m​e
+	 */
+	NAME: string
+	/**
 	 * C​a​r​d​s
 	 */
 	CARDS: string
@@ -172,6 +188,22 @@ export type TranslationFunctions = {
 	 * Add
 	 */
 	ADD: () => LocalizedString
+	/**
+	 * Edit
+	 */
+	EDIT: () => LocalizedString
+	/**
+	 * Save
+	 */
+	SAVE: () => LocalizedString
+	/**
+	 * Cancel
+	 */
+	CANCEL: () => LocalizedString
+	/**
+	 * Name
+	 */
+	NAME: () => LocalizedString
 	/**
 	 * Cards
 	 */

@@ -53,3 +53,8 @@ export async function getPDFDocument(
   }
   return { doc, pdfBlob };
 }
+
+export async function updatePDFDocument(pdfDoc: PDFDocument) {
+  await set(pdfDoc.id, pdfDoc);
+  return pdfDoc;
+}

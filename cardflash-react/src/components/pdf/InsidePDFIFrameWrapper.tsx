@@ -5,10 +5,10 @@ import debounce from "lodash.debounce";
 import { LucideImagePlus } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { IoClose } from "react-icons/io5";
+import { BsExclamationSquareFill, BsQuestionSquareFill } from "react-icons/bs";
+import { IoAdd, IoClose } from "react-icons/io5";
 import { PiSelectionPlusBold } from "react-icons/pi";
-import { TbTextPlus } from "react-icons/tb";
-import { AddContentFunction } from "./addContentFunction";
+import { AddableContent } from "./addContentFunction";
 
 const DRAG_HANDLER_POSITIONS = [
   "TOP-LEFT",
@@ -121,7 +121,11 @@ function addImageSel(
 type RectangleSelection = { x1: number; y1: number; x2: number; y2: number };
 
 interface InsidePDFIFrameWrapperProps {
-  addContent: AddContentFunction;
+  addContent: (
+    content: AddableContent,
+    pdfPage: number,
+    side: "front" | "back",
+  ) => unknown;
   iframeWindow: Window;
   pdfViewerApp: { current?: PDFViewerApplication };
 }
@@ -139,6 +143,7 @@ export default function InsidePDFIFrameWrapper(
     y: number;
     el: HTMLDivElement;
   }>();
+  const [activeSide, setActiveSide] = useState<"front" | "back">("front");
 
   function updateSelectionIndicatorRef() {
     if (selRef.current && selIndicatorRef.current) {
@@ -282,27 +287,47 @@ export default function InsidePDFIFrameWrapper(
         createPortal(
           <div
             style={{ top: textSelPos.y + "px", left: textSelPos.x + "px" }}
-            className="z-10 absolute flex-col items-center justify-center gap-y-1 pointer-events-auto flex filter-none"
+            className="z-10 absolute flex-col items-center justify-center gap-y-1 pointer-events-auto flex"
           >
             <button
               data-ignore-ev
               onClick={(ev) => {
                 ev.preventDefault();
-                props.addContent({
-                  type: "text",
-                  text:
-                    props.iframeWindow.document.getSelection()?.toString() ??
-                    "-",
-                });
+                props.addContent(
+                  {
+                    type: "text",
+                    text:
+                      props.iframeWindow.document.getSelection()?.toString() ??
+                      "-",
+                  },
+                  props.pdfViewerApp.current?.page ?? 1,
+                  activeSide,
+                );
                 setTextSelPos(undefined);
                 props.iframeWindow.document.getSelection()?.empty();
               }}
               className={clsx(
                 "rounded-full h-[3rem] w-[3rem]  flex items-center justify-center",
-                "bg-primary text-primary-foreground hover:bg-gray-700 dark:hover:bg-gray-200",
+                "bg-black dark:bg-black dark:text-white dark:hover:bg-gray-800 text-primary-foreground hover:bg-gray-700",
               )}
             >
-              <TbTextPlus className="pointer-events-none" />
+              <IoAdd className="pointer-events-none" size={24} />
+            </button>
+            <button
+              data-ignore-ev
+              onClick={(ev) => {
+                ev.preventDefault();
+                setActiveSide((s) => (s === "front" ? "back" : "front"));
+              }}
+              className={clsx(
+                "rounded-full h-[2.5rem] w-[2.5rem]  flex items-center justify-center",
+                "text-white bg-black",
+                activeSide === "front" && "text-orange-600 ",
+                activeSide === "back" && "text-green-600",
+              )}
+            >
+              {activeSide === "front" && <BsQuestionSquareFill />}
+              {activeSide === "back" && <BsExclamationSquareFill />}
             </button>
             <button
               data-ignore-ev
@@ -312,7 +337,7 @@ export default function InsidePDFIFrameWrapper(
               }}
               className={clsx(
                 "rounded-full h-[2rem] w-[2rem] flex items-center justify-center",
-                "bg-white shadow border text-red-500 hover:bg-red-600 hover:text-white hover:border-red-600",
+                "bg-black dark:bg-black dark:text-white dark:hover:bg-red-800 text-primary-foreground hover:bg-red-700",
               )}
             >
               <IoClose size={20} className="pointer-events-none" />
@@ -419,7 +444,11 @@ export default function InsidePDFIFrameWrapper(
                         canvasRef.current,
                       );
                       if (dataURL) {
-                        props.addContent({ type: "image", dataURL });
+                        props.addContent(
+                          { type: "image", dataURL },
+                          props.pdfViewerApp.current.page,
+                          activeSide,
+                        );
                         selRef.current = undefined;
                         setToggled(false);
                       }
@@ -432,6 +461,22 @@ export default function InsidePDFIFrameWrapper(
                 )}
               >
                 <LucideImagePlus className="pointer-events-none" />
+              </button>
+              <button
+                data-ignore-ev
+                onClick={(ev) => {
+                  ev.preventDefault();
+                  setActiveSide((s) => (s === "front" ? "back" : "front"));
+                }}
+                className={clsx(
+                  "rounded-full h-[2.5rem] w-[2.5rem]  flex items-center justify-center",
+                  "text-white bg-black",
+                  activeSide === "front" && "text-orange-600 ",
+                  activeSide === "back" && "text-green-600",
+                )}
+              >
+                {activeSide === "front" && <BsQuestionSquareFill />}
+                {activeSide === "back" && <BsExclamationSquareFill />}
               </button>
               <button
                 data-ignore-ev

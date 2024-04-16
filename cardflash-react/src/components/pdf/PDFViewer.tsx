@@ -2,12 +2,16 @@ import { PDFViewerApplication } from "@/lib/pdf-types";
 import { useEffect, useRef } from "react";
 import { createRoot } from "react-dom/client";
 import InsidePDFIFrameWrapper from "./InsidePDFIFrameWrapper";
-import { AddContentFunction } from "./addContentFunction";
+import { AddableContent } from "./addContentFunction";
 
 interface PDFViewerProps {
   file: string;
   defaultPage?: number;
-  addContent: AddContentFunction;
+  addContent: (
+    content: AddableContent,
+    pdfPage: number,
+    side: "front" | "back",
+  ) => unknown;
 }
 
 const LINK_EL_IFRAME_ID = "cardflash-styles";
@@ -133,9 +137,9 @@ export default function PDFViewer(props: PDFViewerProps) {
           }}
           className="h-full w-full outline outline-1 outline-gray-300 dark:outline-gray-600  rounded-sm"
           ref={pdfIFrame}
-          src={`/pdfjs/viewer/viewer.html?file=${encodeURI(
-            props.file,
-          )}&pagemode=none&page=${props.defaultPage ?? 1}`}
+          src={`/pdfjs/viewer/viewer.html?file=${encodeURI(props.file)}#page=${
+            props.defaultPage ?? 1
+          }`}
         />
       )}
     </>

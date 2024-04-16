@@ -46,12 +46,7 @@ function DocumentOverview() {
   const queryClient = useQueryClient();
 
   const addDocMut = useMutation({
-    mutationFn: (newData: {
-      newDoc: Omit<PDFDocument, "attachmentID" | "id" | "lastUpdated">;
-      pdfBlob: Blob;
-    }) => {
-      return createPDFDocument(newData.newDoc, newData.pdfBlob);
-    },
+    mutationFn: createPDFDocument,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["pdf-documents"] });
     },
@@ -71,7 +66,7 @@ function DocumentOverview() {
           if (files.length > 0) {
             addDocMut.mutate({
               pdfBlob: files[0],
-              newDoc: { name: files[0].name.split(".pdf")[0], tags: [] },
+              pdfDoc: { name: files[0].name.split(".pdf")[0], tags: [] },
             });
           }
         }}
@@ -89,11 +84,11 @@ function PDFDocElement({ doc }: { doc: PDFDocument }) {
   const { LL } = useI18nContext();
   const queryClient = useQueryClient();
   return (
-    <li className="w-full flex justify-between items-center rounded-lg border bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/20 dark:hover:bg-blue-800/30 border-blue-200 hover:border-blue-300 dark:border-blue-800 dark:hover:border-blue-700  px-1">
+    <li className="w-full flex justify-between items-center rounded border hover:bg-blue-50  dark:hover:bg-blue-800/20 border-blue-200 hover:border-blue-300 dark:border-blue-900 dark:hover:border-blue-800 px-3">
       <Link
         to="/documents/$docID"
         params={{ docID: doc.id }}
-        className="flex justify-left items-center w-[calc(100%-3rem)] h-full py-2"
+        className="flex justify-left items-center w-[calc(100%-3rem)] h-full py-3"
       >
         <BsFilePdf size={32} className="" />
         <h3

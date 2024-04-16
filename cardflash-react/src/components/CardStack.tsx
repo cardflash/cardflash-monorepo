@@ -10,10 +10,12 @@ import {
 } from "react-icons/io5";
 import { TiArrowBackOutline } from "react-icons/ti";
 import { Button } from "./ui/button";
-import { Card } from "@/card-context";
 
 import "katex/dist/katex.min.css";
 import renderMathInElement from "katex/contrib/auto-render";
+import { Flashcard, updateFlashcard } from "@/lib/storage";
+import { LuDices } from "react-icons/lu";
+import { Link } from "@tanstack/react-router";
 const MAX_NUMBER_OF_CARDS_SHOWN = 7;
 const spring = {
   type: "spring",
@@ -21,28 +23,112 @@ const spring = {
   damping: 40,
   duration: 1.0,
 };
+function getStudyDate(d: Date) {
+  return new Date(d.toDateString());
+}
+
+function getUTCDate(d: Date) {
+  return Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
+}
+
+function daysBetween(d1: Date, d2: Date) {
+  const utc1 = getUTCDate(d1);
+  const utc2 = getUTCDate(d2);
+  return Math.round((utc2 - utc1) / (1000 * 60 * 60 * 24));
+}
+
+function getLocalScore(card: Flashcard, studyAhead = 0) {
+  const now = new Date();
+  const date = getStudyDate(new Date(card.scheduling.lastReview));
+  const dayDiff = daysBetween(date, now) + studyAhead;
+  const expScore = Math.min(
+    Math.min(Math.pow(1.5, card.scheduling.score), 13 * 1.5) / (dayDiff * 1.5),
+    card.scheduling.score,
+  );
+  // If last updated today
+  if (dayDiff === 0 && card.scheduling.score >= 1.0) {
+    return 1;
+  }
+  return expScore;
+}
 
 export const CardStack = ({
   items,
   offset,
   scaleFactor,
 }: {
-  items: Card[];
+  items: Flashcard[];
   offset?: number;
   scaleFactor?: number;
 }) => {
   const CARD_OFFSET = offset || 6;
   const SCALE_FACTOR = scaleFactor || 0.04;
-  const [cards, setCards] = useState(items.map((c) => ({ ...c, score: 0.0 })));
+
+  function updateCurrentFlashcardScore(
+    ease: EASE_OPTIONS,
+    info: { card: Flashcard; localScore: number },
+  ) {
+    let newScore = info.localScore;
+    const globalScoreBefore = info.card.scheduling.score;
+    let newGlobalScore = globalScoreBefore;
+    switch (ease) {
+      case "AGAIN":
+        newScore = -0.1;
+        if (globalScoreBefore > 2) {
+          newGlobalScore = globalScoreBefore / 4 - 1;
+        } else {
+          newGlobalScore = -2;
+        }
+        break;
+      case "HARD":
+        newScore += 0.3334;
+        newGlobalScore += 0.3334;
+        break;
+      case "GOOD":
+        newScore += 0.5;
+        newGlobalScore += 0.5;
+        break;
+      case "EASY":
+        newScore += 1;
+        newGlobalScore += 1;
+        break;
+    }
+    info.card.scheduling = { score: newGlobalScore, lastReview: Date.now() };
+    info.localScore = newScore;
+    updateFlashcard(info.card);
+    const newCards = [...cards]
+      .filter((c) => c.localScore < 1)
+      .map((inner) => ({ inner, random: Math.random() }));
+    newCards.sort((a, b) => a.random - b.random);
+    if (newCards.length > 0 && newCards[0].inner.card.id === info.card.id) {
+      newCards.push(newCards.shift()!);
+    }
+    setCards(newCards.map(({ inner }) => inner));
+  }
+
+  // TODO: Update scoring
+  const [cards, setCards] = useState(
+    items
+      .map((card) => ({ card, localScore: getLocalScore(card) }))
+      .filter(({ localScore }) => localScore < 1),
+  );
   const [flipped, setFlipped] = useState(false);
 
   const totalNumberOfCards = useMemo(() => {
-    return items.length;
+    return items
+      .map((card) => ({ card, localScore: getLocalScore(card) }))
+      .filter(({ localScore }) => localScore < 1).length;
   }, [items]);
   const { LL } = useI18nContext();
 
   const activeCardRef = useRef<HTMLDivElement>(null);
-
+  useEffect(() => {
+    setCards(
+      items
+        .map((card) => ({ card, localScore: getLocalScore(card) }))
+        .filter(({ localScore }) => localScore < 1),
+    );
+  }, [items]);
   useEffect(() => {
     if (activeCardRef.current) {
       renderMathInElement(activeCardRef.current, {
@@ -68,7 +154,7 @@ export const CardStack = ({
       <Progress value={100 * (1 - cards.length / totalNumberOfCards)} />
       <div className="relative h-64 sm:h-52 md:h-60 xl:h-[21rem] w-[25rem] mx-auto max-w-full sm:mx-auto sm:w-80md:w-96 xl:w-[32rem] mt-[4rem]">
         {cards.length === 0 && <div>{LL.STUDY.NO_CARDS()}</div>}
-        {cards.map((card, index) =>
+        {cards.map(({ card }, index) =>
           index > MAX_NUMBER_OF_CARDS_SHOWN ? null : (
             <motion.div
               key={card.id}
@@ -128,7 +214,7 @@ export const CardStack = ({
                     </h2> */}
                     {typeof card.front === "string" && (
                       <div
-                        className="pl-1 pt-1 editor-prose"
+                        className="pl-1 pt-1 editor-prose h-full"
                         dangerouslySetInnerHTML={{ __html: card.front }}
                       ></div>
                     )}
@@ -137,7 +223,7 @@ export const CardStack = ({
                     )}
                   </motion.div>
                   <motion.div
-                    className="border p-2 h-full overflow-auto text-left rounded-lg border-gray-300 dark:border-slate-700 bg-gray-50 dark:bg-slate-900 shadow-lg"
+                    className="border flex flex-col p-2 h-full overflow-auto text-left rounded-lg border-gray-300 dark:border-slate-700 bg-gray-50 dark:bg-slate-900 shadow-lg"
                     initial={{ rotateY: 180 }}
                     animate={{ rotateY: flipped && index === 0 ? 0 : 180 }}
                     transition={spring}
@@ -161,6 +247,17 @@ export const CardStack = ({
                     {typeof card.back !== "string" && (
                       <div className="pl-1 pt-1">{card.back}</div>
                     )}
+                    {card.pdfDocumentID && (
+                      <Link
+                        className="underline decoration-foreground/20 hover:decoration-foreground text-gray-800 dark:text-gray-200 mx-auto block mt-auto"
+                        to="/documents/$docID"
+                        params={{ docID: card.pdfDocumentID }}
+                        search={{ page: card.pdfPage }}
+                        onClick={(ev) => ev.stopPropagation()}
+                      >
+                        {LL.VIEW_PDF()}
+                      </Link>
+                    )}
                   </motion.div>
                 </div>
               </motion.div>
@@ -173,31 +270,30 @@ export const CardStack = ({
           show={flipped}
           onFlip={() => setFlipped((f) => !f)}
           onAnswer={(answer) => {
-            setCards((prevCards) => {
-              const newArray = [...prevCards];
-              newArray[0] = { ...newArray[0] };
-              newArray[0].score +=
-                answer === "EASY"
-                  ? 1.0
-                  : answer === "GOOD"
-                  ? 0.5
-                  : answer === "HARD"
-                  ? -0.1
-                  : -0.5;
-              if (newArray[0].score >= 1.0) {
-                newArray.shift();
-              } else {
-                newArray.push(newArray.shift()!);
-              }
-              return newArray;
-            });
+            updateCurrentFlashcardScore(answer, cards[0]);
             setFlipped(false);
           }}
         />
       )}
+      <Button
+        variant="outline"
+        className="mt-2 flex mx-auto gap-x-1.5"
+        onClick={() => {
+          const newCards = [...cards]
+            .filter((c) => c.localScore < 1)
+            .map((inner) => ({ inner, random: Math.random() }));
+          newCards.sort((a, b) => a.random - b.random);
+          setCards(newCards.map(({ inner }) => inner));
+          setFlipped(false);
+        }}
+      >
+        {LL.SHUFFLE()} <LuDices size={18} />
+      </Button>
     </div>
   );
 };
+
+type EASE_OPTIONS = "AGAIN" | "HARD" | "GOOD" | "EASY";
 
 const ANSWER_OPTIONS = [
   {

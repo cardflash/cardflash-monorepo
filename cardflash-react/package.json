@@ -44,7 +44,8 @@
     "react-icons": "^5.0.1",
     "tailwind-merge": "^2.2.2",
     "tailwindcss-animate": "^1.0.7",
-    "typesafe-i18n": "^5.26.2"
+    "typesafe-i18n": "^5.26.2",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.12",

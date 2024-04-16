@@ -61,6 +61,14 @@ type RootTranslation = {
 	 */
 	NAME: string
 	/**
+	 * S​h​u​f​f​l​e
+	 */
+	SHUFFLE: string
+	/**
+	 * V​i​e​w​ ​P​D​F
+	 */
+	VIEW_PDF: string
+	/**
 	 * C​a​r​d​s
 	 */
 	CARDS: string
@@ -204,6 +212,14 @@ export type TranslationFunctions = {
 	 * Name
 	 */
 	NAME: () => LocalizedString
+	/**
+	 * Shuffle
+	 */
+	SHUFFLE: () => LocalizedString
+	/**
+	 * View PDF
+	 */
+	VIEW_PDF: () => LocalizedString
 	/**
 	 * Cards
 	 */

@@ -2,27 +2,29 @@ import FlashCardEditor from "@/components/FlashCardEditor";
 import PDFViewer from "@/components/pdf/PDFViewer";
 import { AddContentFunction } from "@/components/pdf/addContentFunction";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useI18nContext } from "@/i18n/i18n-react";
 import { getPDFDocument } from "@/lib/storage";
 import { useQuery } from "@tanstack/react-query";
-import { Link, createLazyFileRoute } from "@tanstack/react-router";
+import { Link, createFileRoute } from "@tanstack/react-router";
+import clsx from "clsx";
+import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
-import {
-  BsExclamationSquare,
-  BsExclamationSquareFill,
-  BsQuestionSquare,
-  BsQuestionSquareFill,
-} from "react-icons/bs";
 import { IoArrowBack } from "react-icons/io5";
+import { z } from "zod";
 
-export const Route = createLazyFileRoute("/documents/$docID")({
+const docIDSearchSchema = z.object({
+  page: z.number().min(1).optional(),
+});
+
+export const Route = createFileRoute("/documents/$docID")({
   component: SingleDocPage,
+  validateSearch: docIDSearchSchema,
 });
 
 function SingleDocPage() {
   const { docID } = Route.useParams();
+  const { page } = Route.useSearch();
   const { isPending, error, data } = useQuery({
     queryKey: [`pdf-document-${docID}`],
     queryFn: () => {
@@ -45,18 +47,40 @@ function SingleDocPage() {
 
   if (error) return "An error has occurred: " + error.message;
 
-  return <SingleDocumentView objectURL={data.objectURL} />;
+  return (
+    <SingleDocumentView objectURL={data.objectURL} docID={docID} page={page} />
+  );
 }
 
-function SingleDocumentView({ objectURL }: { objectURL: string }) {
+function SingleDocumentView({
+  objectURL,
+  docID,
+  page,
+}: {
+  objectURL: string;
+  docID: string;
+  page: number | undefined;
+}) {
   const { LL } = useI18nContext();
-  const [activeSide, setActiveSide] = useState<"front" | "back">("front");
+  const [activeTab, setActiveTab] = useState<
+    "pdf-viewer" | "cards" | "combined"
+  >("pdf-viewer");
   const flashcardEditorRef = useRef<{
     addContent: AddContentFunction;
   }>(null);
 
   return (
     <Tabs
+      value={activeTab}
+      onValueChange={(newActiveTab) =>
+        setActiveTab(
+          newActiveTab === "pdf-viewer"
+            ? "pdf-viewer"
+            : newActiveTab === "cards"
+            ? "cards"
+            : "combined",
+        )
+      }
       defaultValue="pdf-viewer"
       className="w-full h-full px-0 mx-0 flex flex-col"
     >
@@ -84,46 +108,48 @@ function SingleDocumentView({ objectURL }: { objectURL: string }) {
         </TabsList>
         <div className="flex justify-end w-fit ml-auto">
           {/* Place for top-right buttons */}
-          <ToggleGroup
-            type="single"
-            value={activeSide}
-            onValueChange={(val) =>
-              setActiveSide(val === "front" ? "front" : "back")
-            }
-          >
-            <ToggleGroupItem value="front">
-              {activeSide === "front" && <BsQuestionSquareFill />}
-              {activeSide !== "front" && <BsQuestionSquare />}
-            </ToggleGroupItem>
-            <ToggleGroupItem value="back">
-              {activeSide === "back" && <BsExclamationSquareFill />}
-              {activeSide !== "back" && <BsExclamationSquare />}
-            </ToggleGroupItem>
-          </ToggleGroup>
         </div>
       </div>
-      {/* Force mount & use CSS to display: none it if not visible; This allows easy switching between tabs without having to reload the PDF editor (and loose its state!) */}
-      <TabsContent
-        value="pdf-viewer"
-        className="h-full data-[state=inactive]:-z-10 data-[state=inactive]:absolute data-[state=inactive]:pointer-events-none data-[state=inactive]:opacity-0"
-        forceMount={true}
-      >
-        {objectURL !== undefined && (
-          <PDFViewer
-            file={objectURL}
-            addContent={(dataURL) => {
-              flashcardEditorRef.current?.addContent(dataURL);
-            }}
-          />
+      <div
+        className={clsx(
+          "w-full mt-2 h-full grid",
+          activeTab === "combined" && "grid-cols-2 gap-x-2",
+          activeTab !== "combined" && "grid-cols-1",
         )}
-      </TabsContent>
-      <TabsContent
-        value="cards"
-        className="data-[state=inactive]:-z-10 data-[state=inactive]:absolute data-[state=inactive]:pointer-events-none data-[state=inactive]:opacity-0"
-        forceMount={true}
       >
-        <FlashCardEditor ref={flashcardEditorRef} activeSide={activeSide} />
-      </TabsContent>
+        <motion.div
+          transition={{ type: "spring", duration: 0.5, bounce: 0.2 }}
+          layout
+          className={clsx("w-full h-full", activeTab === "cards" && "hidden")}
+        >
+          {objectURL !== undefined && (
+            <PDFViewer
+              defaultPage={page}
+              file={objectURL}
+              addContent={(dataURL, pdfPage: number, side) => {
+                flashcardEditorRef.current?.addContent(
+                  dataURL,
+                  {
+                    pdfDocumentID: docID,
+                    pdfPage: pdfPage,
+                  },
+                  side,
+                );
+              }}
+            />
+          )}
+        </motion.div>
+        <motion.div
+          transition={{ type: "spring", duration: 0.5, bounce: 0.2 }}
+          layout
+          className={clsx(
+            "w-full h-full",
+            activeTab === "pdf-viewer" && "hidden",
+          )}
+        >
+          <FlashCardEditor ref={flashcardEditorRef} />
+        </motion.div>
+      </div>
     </Tabs>
   );
 }

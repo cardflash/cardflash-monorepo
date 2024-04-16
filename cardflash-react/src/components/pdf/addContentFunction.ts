@@ -1,3 +1,8 @@
+export type AddableContent =
+  | { type: "image"; dataURL: string }
+  | { type: "text"; text: string };
 export type AddContentFunction = (
-  content: { type: "image"; dataURL: string } | { type: "text"; text: string },
+  content: AddableContent,
+  pdfInfo: { pdfDocumentID: string; pdfPage: number },
+  side: "front" | "back",
 ) => unknown;

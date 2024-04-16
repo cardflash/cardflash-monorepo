@@ -1,34 +1,36 @@
-import { CardContext } from "@/card-context";
 import { useI18nContext } from "@/i18n/i18n-react";
+import { createFlashcard } from "@/lib/storage";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { Editor } from "@tiptap/core";
-import {
-  forwardRef,
-  useContext,
-  useImperativeHandle,
-  useMemo,
-  useRef,
-} from "react";
+import { forwardRef, useImperativeHandle, useMemo, useRef } from "react";
 import SimpleEditor from "./SimpleEditor";
+import { AddContentFunction } from "./pdf/addContentFunction";
 import { Button } from "./ui/button";
 import { Label } from "./ui/label";
-import { AddContentFunction } from "./pdf/addContentFunction";
 
 interface FlashCardEditor {}
 export const FlashCardEditor = forwardRef<
   { addContent: AddContentFunction },
-  { activeSide: string }
+  unknown
 >((props, ref) => {
-  const { cards, updateCards } = useContext(CardContext);
+  const pdfInfoRef = useRef<{ pdfDocumentID: string; pdfPage: number }>();
+  const queryClient = useQueryClient();
+
+  const addFlashcardMut = useMutation({
+    mutationFn: createFlashcard,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["flashcards"] });
+    },
+  });
+
   const frontEditorRef = useRef<Editor>();
   const backEditorRef = useRef<Editor>();
   const { LL } = useI18nContext();
   const addContent = useMemo<AddContentFunction>(
-    () => (content) => {
+    () => (content, pdfInfo, side) => {
+      pdfInfoRef.current = pdfInfo;
       const editor =
-        props.activeSide === "front"
-          ? frontEditorRef.current!
-          : backEditorRef.current!;
-      console.log({ content, editor });
+        side === "front" ? frontEditorRef.current! : backEditorRef.current!;
       if (content.type === "image") {
         editor.commands.setImage({
           src: content.dataURL,
@@ -50,7 +52,7 @@ export const FlashCardEditor = forwardRef<
         });
       }
     },
-    [props.activeSide],
+    [],
   );
   useImperativeHandle(ref, () => ({ addContent }), [addContent]);
   return (
@@ -74,14 +76,23 @@ export const FlashCardEditor = forwardRef<
         className="block mx-auto mt-4 mb-12"
         size="lg"
         onClick={async () => {
-          updateCards([
-            {
-              id: Date.now(),
-              front: frontEditorRef.current!.getHTML(),
-              back: backEditorRef.current!.getHTML(),
-            },
-            ...cards,
-          ]);
+          addFlashcardMut.mutate({
+            ...(pdfInfoRef.current ?? {
+              pdfDocumentID: undefined,
+              pdfPage: undefined,
+            }),
+            type: "simple",
+            front: frontEditorRef.current!.getHTML(),
+            back: backEditorRef.current!.getHTML(),
+          });
+          // updateCards([
+          //   {
+          //     id: Date.now(),
+          //     front: frontEditorRef.current!.getHTML(),
+          //     back: backEditorRef.current!.getHTML(),
+          //   },
+          //   ...cards,
+          // ]);
           frontEditorRef.current!.commands.clearContent();
           backEditorRef.current!.commands.clearContent();
         }}

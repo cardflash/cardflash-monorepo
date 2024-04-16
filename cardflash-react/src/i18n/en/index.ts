@@ -14,6 +14,8 @@ const en = {
   SAVE: "Save",
   CANCEL: "Cancel",
   NAME: "Name",
+  SHUFFLE: "Shuffle",
+  VIEW_PDF: "View PDF",
   CARDS: "Cards",
   NUM_CARDS_SCHEDULED: "{0} cards scheduled",
   OF_NUM_CARDS_DONE: "{numDone} of {numTotal} cards done",

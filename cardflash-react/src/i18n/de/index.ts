@@ -14,6 +14,8 @@ const de = {
   SAVE: "Speichern",
   CANCEL: "Abbrechen",
   NAME: "Name",
+  SHUFFLE: "Mischen",
+  VIEW_PDF: "PDF Ansehen",
   CARDS: "Karteikarten",
   NUM_CARDS_SCHEDULED: "{0} Karteikarten geplant",
   OF_NUM_CARDS_DONE: "{numDone} von {numTotal} Karteikarten gelernt",

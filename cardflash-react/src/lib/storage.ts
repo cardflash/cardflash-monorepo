@@ -1,6 +1,10 @@
 import { get, set, keys, getMany } from "idb-keyval";
 const IDB_KEY_PREFIX = "cardflash-react-";
-export type BaseSavedDocument = { id: string; lastUpdated: number };
+export type BaseSavedDocument = {
+  id: string;
+  lastUpdated: number;
+  created: number;
+};
 
 const ATTACHMENT_KEY_PREFIX = IDB_KEY_PREFIX + "attachment-";
 
@@ -11,22 +15,23 @@ export type PDFDocument = {
   tags: string[];
 } & BaseSavedDocument;
 
-export async function createPDFDocument(
-  pdfDoc: Omit<PDFDocument, "attachmentID" | "id" | "lastUpdated">,
-  pdfBlob: Blob,
-) {
+export async function createPDFDocument(data: {
+  pdfDoc: Omit<PDFDocument, "attachmentID" | "id" | "lastUpdated" | "created">;
+  pdfBlob: Blob;
+}) {
   const attachmentID =
     ATTACHMENT_KEY_PREFIX +
     Math.round(Math.random() * 10000) +
     "-" +
     Date.now();
-  await set(attachmentID, pdfBlob);
+  await set(attachmentID, data.pdfBlob);
   const doc: PDFDocument = {
-    ...pdfDoc,
+    ...data.pdfDoc,
     id:
       PDF_DOC_KEY_PREFIX + Math.round(Math.random() * 10000) + "-" + Date.now(),
     attachmentID,
     lastUpdated: Date.now(),
+    created: Date.now(),
   };
   await set(doc.id, doc);
   return doc;
@@ -55,6 +60,51 @@ export async function getPDFDocument(
 }
 
 export async function updatePDFDocument(pdfDoc: PDFDocument) {
+  pdfDoc.lastUpdated = Date.now();
   await set(pdfDoc.id, pdfDoc);
   return pdfDoc;
+}
+
+const CARD_KEY_PREFIX = IDB_KEY_PREFIX + "card-";
+export type Flashcard = {
+  type: "simple";
+  front: string;
+  back: string;
+  pdfDocumentID: string | undefined;
+  pdfPage: number | undefined;
+  scheduling: { lastReview: number; score: number };
+} & BaseSavedDocument;
+
+export async function createFlashcard(
+  cardInput: Omit<Flashcard, "id" | "lastUpdated" | "created" | "scheduling">,
+) {
+  const card: Flashcard = {
+    ...cardInput,
+    id: CARD_KEY_PREFIX + Math.round(Math.random() * 10000) + "-" + Date.now(),
+    lastUpdated: Date.now(),
+    created: Date.now(),
+    scheduling: { lastReview: 0, score: 0 },
+  };
+  await set(card.id, card);
+  return card;
+}
+
+export async function listFlashcards() {
+  const docs = await getMany<Flashcard>(
+    (await keys()).filter((k) => k.toString().startsWith(CARD_KEY_PREFIX)),
+  );
+  return docs;
+}
+
+export async function getFlashcard(id: string): Promise<Flashcard> {
+  const card = await get<Flashcard>(id);
+  if (!card) {
+    throw Error("Flashcard not found: " + id);
+  }
+  return card;
+}
+
+export async function updateFlashcard(card: Flashcard) {
+  await set(card.id, card);
+  return card;
 }

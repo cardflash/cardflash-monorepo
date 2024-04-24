@@ -1,5 +1,5 @@
 import { useI18nContext } from "@/i18n/i18n-react";
-import { createFlashcard } from "@/lib/storage";
+import { PDFDocument, createFlashcard } from "@/lib/storage";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { Editor } from "@tiptap/core";
 import { forwardRef, useImperativeHandle, useMemo, useRef } from "react";
@@ -8,18 +8,20 @@ import { AddContentFunction } from "./pdf/addContentFunction";
 import { Button } from "./ui/button";
 import { Label } from "./ui/label";
 
-interface FlashCardEditor {}
 export const FlashCardEditor = forwardRef<
   { addContent: AddContentFunction },
-  unknown
+  { doc: PDFDocument }
 >((props, ref) => {
-  const pdfInfoRef = useRef<{ pdfDocumentID: string; pdfPage: number }>();
+  const pdfInfoRef = useRef<{ pdfPage: number }>();
   const queryClient = useQueryClient();
 
   const addFlashcardMut = useMutation({
     mutationFn: createFlashcard,
-    onSuccess: () => {
+    onSuccess: (c) => {
       queryClient.invalidateQueries({ queryKey: ["flashcards"] });
+      queryClient.invalidateQueries({
+        queryKey: [`pdf-document-${c.pdfDocumentID}-cards`],
+      });
     },
   });
 
@@ -73,31 +75,59 @@ export const FlashCardEditor = forwardRef<
         </div>
       </div>
       <Button
-        className="block mx-auto mt-4 mb-12"
+        className="block mx-auto mt-4"
         size="lg"
         onClick={async () => {
           addFlashcardMut.mutate({
-            ...(pdfInfoRef.current ?? {
-              pdfDocumentID: undefined,
-              pdfPage: undefined,
-            }),
             type: "simple",
+            pdfDocumentID: props.doc.id,
+            pdfPage: pdfInfoRef.current
+              ? pdfInfoRef.current.pdfPage
+              : undefined,
             front: frontEditorRef.current!.getHTML(),
             back: backEditorRef.current!.getHTML(),
           });
-          // updateCards([
-          //   {
-          //     id: Date.now(),
-          //     front: frontEditorRef.current!.getHTML(),
-          //     back: backEditorRef.current!.getHTML(),
-          //   },
-          //   ...cards,
-          // ]);
           frontEditorRef.current!.commands.clearContent();
           backEditorRef.current!.commands.clearContent();
         }}
       >
         {LL.ADD()}
+      </Button>
+      <Button
+        className="block mx-auto mt-4"
+        size="lg"
+        onClick={async () => {
+          if (navigator.storage && navigator.storage.persist) {
+            navigator.storage.persist().then((persistent) => {
+              if (persistent) {
+                Array(1000)
+                  .fill(0)
+                  .forEach((_, i) => {
+                    addFlashcardMut.mutate({
+                      type: "simple",
+                      pdfDocumentID: props.doc.id,
+                      pdfPage: pdfInfoRef.current
+                        ? pdfInfoRef.current.pdfPage
+                        : undefined,
+                      front:
+                        frontEditorRef.current!.getHTML() + `<br><p>${i}</p>`,
+                      back:
+                        backEditorRef.current!.getHTML() + `<br><p>${i}</p>`,
+                    });
+                  });
+                console.log("added 1000 cards!");
+                //   frontEditorRef.current!.commands.clearContent();
+                // backEditorRef.current!.commands.clearContent();
+              } else {
+                console.log(
+                  "Storage may be cleared by the UA under storage pressure.",
+                );
+              }
+            });
+          }
+        }}
+      >
+        1000 x {LL.ADD()}
       </Button>
     </div>
   );

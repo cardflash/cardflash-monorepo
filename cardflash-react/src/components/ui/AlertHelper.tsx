@@ -8,7 +8,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { SyntheticEvent, useState } from "react";
+import { SyntheticEvent, useEffect, useState } from "react";
 import Spinner from "./Spinner";
 import { useI18nContext } from "@/i18n/i18n-react";
 
@@ -48,16 +48,28 @@ export default function AlertHelper<T>(props: AlertHelperProps<T>) {
   const [open, setOpen] = useState(false);
   const { LL } = useI18nContext();
 
+  useEffect(() => {
+    setData(props.initialData);
+  }, [props.initialData]);
+
   function onSubmit(ev: SyntheticEvent) {
     if (props.mode === "promise") {
       ev.preventDefault();
       setLoading(true);
-      void props.onSubmit(data, ev).finally(() => {
-        setLoading(false);
-        setOpen(false);
-      });
+      void props
+        .onSubmit(data, ev)
+        .then((res) => {
+          if (res !== false) {
+            setOpen(false);
+            setData(props.initialData);
+          }
+        })
+        .finally(() => {
+          setLoading(false);
+        });
     } else {
       props.onSubmit(data, ev);
+      setData(props.initialData);
     }
   }
 

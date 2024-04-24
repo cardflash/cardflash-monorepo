@@ -7,8 +7,8 @@ import { Link, Outlet, createRootRoute } from "@tanstack/react-router";
 import {
   IoAlbums,
   IoAlbumsOutline,
-  IoDuplicate,
-  IoDuplicateOutline,
+  IoFileTray,
+  IoFileTrayOutline,
   IoHomeOutline,
   IoHomeSharp,
   IoSettings,
@@ -28,10 +28,10 @@ function Root() {
       name: LL.ROUTES.HOME(),
     },
     {
-      to: "/documents",
-      icon: IoDuplicateOutline,
-      filledIcon: IoDuplicate,
-      name: LL.ROUTES.DOCUMENTS(),
+      to: "/collections",
+      icon: IoFileTrayOutline,
+      filledIcon: IoFileTray,
+      name: LL.ROUTES.COLLECTIONS(),
     },
     {
       to: "/study",
@@ -53,7 +53,7 @@ function Root() {
       </main>
       <div>
         {/* Desktop */}
-        <div className="hidden lg:block h-full pt-2 px-4 border-r border-gray-300 shadow">
+        <div className="hidden lg:block h-full pt-2 px-4 border-r border-gray-300 dark:border-gray-600 shadow">
           <nav className="flex flex-col items-center h-full gap-y-3">
             {LINKS.map((link) => (
               <Tooltip key={link.to} delayDuration={200}>
@@ -63,7 +63,7 @@ function Root() {
                     to={link.to}
                     className="[&.active]:text-white dark:[&.active]:text-black h-11 w-11 flex items-center justify-center rounded-full [&.active]:bg-slate-700 dark:[&.active]:bg-slate-100 hover:bg-slate-200 dark:hover:bg-stone-800 hover:outline hover:outline-1 hover:outline-slate-400 dark:hover:outline-stone-500"
                   >
-                    {link.icon({ size: 24 })}
+                    <link.icon size={24} />
                   </Link>
                 </TooltipTrigger>
                 <TooltipContent side="right">{link.name}</TooltipContent>
@@ -83,8 +83,11 @@ function Root() {
                 >
                   {({ isActive }) => (
                     <>
-                      {(isActive ? link.filledIcon : link.icon)({ size: 24 })}
-                      <span className="w-[4.5rem] text-center mx-auto text-ellipsis overflow-hidden">
+                      {isActive && <link.filledIcon size={24} />}
+                      {!isActive && <link.icon size={24} />}
+                      <span
+                        className={`w-[4.5rem] text-center mx-auto text-ellipsis overflow-hidden`}
+                      >
                         {link.name}
                       </span>
                     </>

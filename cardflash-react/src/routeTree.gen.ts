@@ -18,9 +18,14 @@ import { Route as rootRoute } from './routes/__root'
 
 const StudyLazyImport = createFileRoute('/study')()
 const SettingsLazyImport = createFileRoute('/settings')()
-const DocumentsLazyImport = createFileRoute('/documents')()
+const CollectionsLazyImport = createFileRoute('/collections')()
 const IndexLazyImport = createFileRoute('/')()
-const DocumentsDocIDLazyImport = createFileRoute('/documents/$docID')()
+const CollectionsCollectionIDLazyImport = createFileRoute(
+  '/collections/$collectionID',
+)()
+const CollectionsDocumentsDocIDLazyImport = createFileRoute(
+  '/collections/documents/$docID',
+)()
 
 // Create/Update Routes
 
@@ -34,22 +39,31 @@ const SettingsLazyRoute = SettingsLazyImport.update({
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/settings.lazy').then((d) => d.Route))
 
-const DocumentsLazyRoute = DocumentsLazyImport.update({
-  path: '/documents',
+const CollectionsLazyRoute = CollectionsLazyImport.update({
+  path: '/collections',
   getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/documents.lazy').then((d) => d.Route))
+} as any).lazy(() => import('./routes/collections.lazy').then((d) => d.Route))
 
 const IndexLazyRoute = IndexLazyImport.update({
   path: '/',
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
 
-const DocumentsDocIDLazyRoute = DocumentsDocIDLazyImport.update({
-  path: '/documents/$docID',
-  getParentRoute: () => rootRoute,
-} as any).lazy(() =>
-  import('./routes/documents_/$docID.lazy').then((d) => d.Route),
-)
+const CollectionsCollectionIDLazyRoute =
+  CollectionsCollectionIDLazyImport.update({
+    path: '/collections/$collectionID',
+    getParentRoute: () => rootRoute,
+  } as any).lazy(() =>
+    import('./routes/collections_/$collectionID.lazy').then((d) => d.Route),
+  )
+
+const CollectionsDocumentsDocIDLazyRoute =
+  CollectionsDocumentsDocIDLazyImport.update({
+    path: '/collections/documents/$docID',
+    getParentRoute: () => rootRoute,
+  } as any).lazy(() =>
+    import('./routes/collections_/documents_/$docID.lazy').then((d) => d.Route),
+  )
 
 // Populate the FileRoutesByPath interface
 
@@ -59,8 +73,8 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexLazyImport
       parentRoute: typeof rootRoute
     }
-    '/documents': {
-      preLoaderRoute: typeof DocumentsLazyImport
+    '/collections': {
+      preLoaderRoute: typeof CollectionsLazyImport
       parentRoute: typeof rootRoute
     }
     '/settings': {
@@ -71,8 +85,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StudyLazyImport
       parentRoute: typeof rootRoute
     }
-    '/documents/$docID': {
-      preLoaderRoute: typeof DocumentsDocIDLazyImport
+    '/collections/$collectionID': {
+      preLoaderRoute: typeof CollectionsCollectionIDLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/collections/documents/$docID': {
+      preLoaderRoute: typeof CollectionsDocumentsDocIDLazyImport
       parentRoute: typeof rootRoute
     }
   }
@@ -82,10 +100,11 @@ declare module '@tanstack/react-router' {
 
 export const routeTree = rootRoute.addChildren([
   IndexLazyRoute,
-  DocumentsLazyRoute,
+  CollectionsLazyRoute,
   SettingsLazyRoute,
   StudyLazyRoute,
-  DocumentsDocIDLazyRoute,
+  CollectionsCollectionIDLazyRoute,
+  CollectionsDocumentsDocIDLazyRoute,
 ])
 
 /* prettier-ignore-end */

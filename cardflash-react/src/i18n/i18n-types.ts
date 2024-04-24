@@ -24,6 +24,10 @@ type RootTranslation = {
 		 */
 		DOCUMENTS: string
 		/**
+		 * C​o​l​l​e​c​t​i​o​n​s
+		 */
+		COLLECTIONS: string
+		/**
 		 * S​t​u​d​y
 		 */
 		STUDY: string
@@ -48,6 +52,10 @@ type RootTranslation = {
 	 * E​d​i​t
 	 */
 	EDIT: string
+	/**
+	 * D​e​l​e​t​e
+	 */
+	DELETE: string
 	/**
 	 * S​a​v​e
 	 */
@@ -163,6 +171,18 @@ type RootTranslation = {
 		 */
 		BACK: string
 	}
+	COLLECTIONS: {
+		/**
+		 * A​r​e​ ​y​o​u​ ​s​u​r​e​?​ ​T​h​i​s​ ​w​i​l​l​ ​d​e​l​e​t​e​ ​a​l​l​ ​d​o​c​u​m​e​n​t​s​ ​a​n​d​ ​c​a​r​d​s​ ​i​n​ ​t​h​i​s​ ​c​o​l​l​e​c​t​i​o​n​.
+		 */
+		DELETE_COLLECTION_WARNING: string
+	}
+	DOCUMENTS: {
+		/**
+		 * A​r​e​ ​y​o​u​ ​s​u​r​e​?​ ​T​h​i​s​ ​w​i​l​l​ ​a​l​s​o​ ​d​e​l​e​t​e​ ​a​l​l​ ​c​a​r​d​s​ ​i​n​ ​t​h​i​s​ ​d​o​c​u​m​e​n​t​.
+		 */
+		DELETE_DOCUMENTS_WARNING: string
+	}
 }
 
 export type TranslationFunctions = {
@@ -175,6 +195,10 @@ export type TranslationFunctions = {
 		 * Documents
 		 */
 		DOCUMENTS: () => LocalizedString
+		/**
+		 * Collections
+		 */
+		COLLECTIONS: () => LocalizedString
 		/**
 		 * Study
 		 */
@@ -200,6 +224,10 @@ export type TranslationFunctions = {
 	 * Edit
 	 */
 	EDIT: () => LocalizedString
+	/**
+	 * Delete
+	 */
+	DELETE: () => LocalizedString
 	/**
 	 * Save
 	 */
@@ -311,6 +339,18 @@ export type TranslationFunctions = {
 		 * Back
 		 */
 		BACK: () => LocalizedString
+	}
+	COLLECTIONS: {
+		/**
+		 * Are you sure? This will delete all documents and cards in this collection.
+		 */
+		DELETE_COLLECTION_WARNING: () => LocalizedString
+	}
+	DOCUMENTS: {
+		/**
+		 * Are you sure? This will also delete all cards in this document.
+		 */
+		DELETE_DOCUMENTS_WARNING: () => LocalizedString
 	}
 }
 

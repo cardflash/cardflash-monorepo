@@ -4,6 +4,7 @@ const de = {
   ROUTES: {
     HOME: "Start",
     DOCUMENTS: "Dokumente",
+    COLLECTIONS: "Sammlungen",
     STUDY: "Lernen",
     SETTINGS: "Einstellungen",
   },
@@ -11,6 +12,7 @@ const de = {
   WELCOME: "Willkommen!",
   ADD: "Hinzufügen",
   EDIT: "Bearbeiten",
+  DELETE: "Löschen",
   SAVE: "Speichern",
   CANCEL: "Abbrechen",
   NAME: "Name",
@@ -48,6 +50,12 @@ const de = {
     FRONT: "Vorderseite",
     BACK: "Rückseite",
   },
+  COLLECTIONS: {
+    DELETE_COLLECTION_WARNING: "Bist du sicher? Alle Dokumente und Karteikarten in dieser Sammlung werden gelöscht."
+  },
+  DOCUMENTS: {
+    DELETE_DOCUMENTS_WARNING: "Bist du sicher? Das Dokument und alle Karteikarten von diesem Dokument werden gelöscht."
+  }
 } satisfies Translation;
 
 export default de;

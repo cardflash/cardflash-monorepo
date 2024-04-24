@@ -142,7 +142,7 @@ export const CardStack = ({
     }
   }, [cards]);
   return (
-    <div className="w-full h-full" ref={activeCardRef}>
+    <div className="w-full" ref={activeCardRef}>
       <h2 className="text-lg text-left mb-2">
         {cards.length === totalNumberOfCards
           ? LL.NUM_CARDS_SCHEDULED(totalNumberOfCards)
@@ -250,7 +250,7 @@ export const CardStack = ({
                     {card.pdfDocumentID && (
                       <Link
                         className="underline decoration-foreground/20 hover:decoration-foreground text-gray-800 dark:text-gray-200 mx-auto block mt-auto"
-                        to="/documents/$docID"
+                        to="/collections/documents/$docID"
                         params={{ docID: card.pdfDocumentID }}
                         search={{ page: card.pdfPage }}
                         onClick={(ev) => ev.stopPropagation()}
@@ -334,7 +334,7 @@ function AnswerBar(props: {
   const [selected, setSelected] = useState<AnswerOption>();
   const { LL } = useI18nContext();
   return (
-    <div className="h-[5rem] relative">
+    <div className="h-[5rem] relative text-center">
       <motion.div
         className={clsx(
           "z-10 absolute w-full h-[5rem] pt-4 ",

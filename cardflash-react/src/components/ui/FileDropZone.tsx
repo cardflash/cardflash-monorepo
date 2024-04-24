@@ -27,7 +27,7 @@ export default function FileDropZone(props: FileDropZoneProps) {
     >
       <label
         htmlFor={id}
-        className="flex flex-col items-center justify-center w-full min-h-32 xl:min-h-56 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50/50 dark:bg-gray-900 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-600 dark:hover:bg-gray-800"
+        className="flex flex-col items-center justify-center w-full min-h-32 xl:min-h-56 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50/40 dark:bg-gray-900/30 hover:bg-gray-100/50 dark:border-gray-600 dark:hover:border-gray-600 dark:hover:bg-gray-800/40"
       >
         <div className="flex flex-col items-center justify-center pt-5 pb-6 text-gray-700 dark:text-gray-300">
           <FiUpload size={32} style={{ marginBottom: "0.5rem" }} />

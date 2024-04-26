@@ -266,29 +266,31 @@ export const CardStack = ({
         )}
       </div>
       {cards.length > 0 && (
-        <AnswerBar
-          show={flipped}
-          onFlip={() => setFlipped((f) => !f)}
-          onAnswer={(answer) => {
-            updateCurrentFlashcardScore(answer, cards[0]);
-            setFlipped(false);
-          }}
-        />
+        <>
+          <AnswerBar
+            show={flipped}
+            onFlip={() => setFlipped((f) => !f)}
+            onAnswer={(answer) => {
+              updateCurrentFlashcardScore(answer, cards[0]);
+              setFlipped(false);
+            }}
+          />
+          <Button
+            variant="outline"
+            className="mt-2 flex mx-auto gap-x-1.5"
+            onClick={() => {
+              const newCards = [...cards]
+                .filter((c) => c.localScore < 1)
+                .map((inner) => ({ inner, random: Math.random() }));
+              newCards.sort((a, b) => a.random - b.random);
+              setCards(newCards.map(({ inner }) => inner));
+              setFlipped(false);
+            }}
+          >
+            {LL.SHUFFLE()} <LuDices size={18} />
+          </Button>
+        </>
       )}
-      <Button
-        variant="outline"
-        className="mt-2 flex mx-auto gap-x-1.5"
-        onClick={() => {
-          const newCards = [...cards]
-            .filter((c) => c.localScore < 1)
-            .map((inner) => ({ inner, random: Math.random() }));
-          newCards.sort((a, b) => a.random - b.random);
-          setCards(newCards.map(({ inner }) => inner));
-          setFlipped(false);
-        }}
-      >
-        {LL.SHUFFLE()} <LuDices size={18} />
-      </Button>
     </div>
   );
 };

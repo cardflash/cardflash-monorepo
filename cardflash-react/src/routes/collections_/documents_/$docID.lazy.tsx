@@ -140,13 +140,13 @@ function SingleDocumentView({
         </div>
         <TabsList className="w-full flex">
           <TabsTrigger value="pdf-viewer" className="w-full">
-            PDF
+            {LL.DOCUMENT()}
           </TabsTrigger>
           <TabsTrigger value="combined" className="w-full hidden sm:block">
-            Combined
+            {LL.COMBINED()}
           </TabsTrigger>
           <TabsTrigger value="cards" className="w-full">
-            Cards
+            {LL.CARDS()}
           </TabsTrigger>
         </TabsList>
         <div className="flex justify-end w-fit ml-auto">
@@ -268,7 +268,7 @@ function SingleDocumentView({
           className={clsx("w-full", activeTab === "pdf-viewer" && "hidden")}
         >
           <FlashCardEditor ref={flashcardEditorRef} doc={doc} />
-          <div className="mt-6">
+          <div className="mt-6 max-w-lg mx-auto">
             <CardStack items={cardData.cards} />
           </div>
         </motion.div>

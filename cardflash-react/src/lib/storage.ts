@@ -112,6 +112,10 @@ export async function listFlashcardsForDocumentID(documentID: string) {
 }
 
 export async function updateFlashcard(card: Flashcard) {
+  if (card.id.startsWith("test")) {
+    console.log("Skipped saving test card!", card);
+    return card;
+  }
   const db = await initDB();
   const newCard: Flashcard = { ...card, lastUpdated: Date.now() };
   await db.put("flashcards", newCard);

@@ -27,7 +27,7 @@ function Study() {
       </h1>
       <div className="h-full w-full">
         <div className="text-center w-full">
-          <CardStack items={data} />
+          <CardStack items={data.length === 0 ? [] : data} />
         </div>
       </div>
     </div>

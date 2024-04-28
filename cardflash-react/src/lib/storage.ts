@@ -108,6 +108,7 @@ export async function listFlashcardsForDocumentID(documentID: string) {
     "by-pdfDocumentID",
     IDBKeyRange.only(documentID),
   );
+  docs.sort((a, b) => b.created - a.created);
   return docs;
 }
 
@@ -166,6 +167,11 @@ export async function getCollection(id: string): Promise<Collection> {
     throw Error("Collection not found: " + id);
   }
   return collection;
+}
+
+export async function deleteFlashcard(id: string): Promise<void> {
+  const db = await initDB();
+  await db.delete("flashcards", id);
 }
 
 export async function deletePDFDocument(id: string): Promise<void> {

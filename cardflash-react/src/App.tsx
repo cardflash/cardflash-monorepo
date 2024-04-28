@@ -42,7 +42,6 @@ export default function App() {
       <TypesafeI18n locale={locale}>
         <QueryClientProvider client={queryClient}>
           <RouterProvider router={router} />
-          {/* <TanStackRouterDevtools position="top-right" /> */}
         </QueryClientProvider>
       </TypesafeI18n>
     </TooltipProvider>

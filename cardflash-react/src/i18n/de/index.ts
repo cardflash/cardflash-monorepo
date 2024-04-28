@@ -90,6 +90,9 @@ const de = {
   CARD_EDITOR: {
     FRONT: "Vorderseite",
     BACK: "Rückseite",
+    IS_EDITING: "Bearbeite Karteikarte",
+    CANCEL_EDITING: "Abbrechen",
+    SAVE: "Speichern",
   },
   COLLECTIONS: {
     DELETE_COLLECTION_WARNING:

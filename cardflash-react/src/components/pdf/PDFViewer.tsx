@@ -1,22 +1,30 @@
 import { PDFViewerApplication } from "@/lib/pdf-types";
-import { useEffect, useRef } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
 import { createRoot } from "react-dom/client";
 import InsidePDFIFrameWrapper from "./InsidePDFIFrameWrapper";
 import { AddableContent } from "./addContentFunction";
+import { SourceLinkAttributes } from "../simple-editor/SourceLink";
 
 interface PDFViewerProps {
   file: string;
   defaultPage?: number;
+  documentID: string;
   addContent: (
     content: AddableContent,
-    pdfPage: number,
+    source: SourceLinkAttributes,
     side: "front" | "back",
   ) => unknown;
+  onLoaded?: (pdfViewerApp: PDFViewerApplication) => unknown;
 }
 
 const LINK_EL_IFRAME_ID = "cardflash-styles";
 
-export default function PDFViewer(props: PDFViewerProps) {
+export const PDFViewer = forwardRef<
+  {
+    getPDFApplication: () => PDFViewerApplication | undefined;
+  },
+  PDFViewerProps
+>((props, ref) => {
   const pdfIFrame = useRef<HTMLIFrameElement>(null);
   const pdfViewerApp = useRef<PDFViewerApplication>();
 
@@ -67,6 +75,12 @@ export default function PDFViewer(props: PDFViewerProps) {
       };
     }
   }, []);
+
+  useImperativeHandle(
+    ref,
+    () => ({ getPDFApplication: () => pdfViewerApp.current }),
+    [],
+  );
 
   return (
     <>
@@ -121,12 +135,14 @@ export default function PDFViewer(props: PDFViewerProps) {
                     iframeWindow={w}
                     pdfViewerApp={pdfViewerApp}
                     addContent={props.addContent}
+                    documentID={props.documentID}
                   />,
                 );
               }
               if (w.PDFViewerApplication) {
                 await w.PDFViewerApplication.initializedPromise;
                 pdfViewerApp.current = w.PDFViewerApplication;
+                props.onLoaded && props.onLoaded(w.PDFViewerApplication);
                 // pdfViewerApp.current.preferences.set('sidebarViewOnLoad',0);
                 // addPageRenderListeners(w.PDFViewerApplication.pdfViewer);
                 // Handle (initial) dark mode
@@ -138,10 +154,12 @@ export default function PDFViewer(props: PDFViewerProps) {
           className="h-full w-full outline outline-1 outline-gray-300 dark:outline-gray-600  rounded-sm"
           ref={pdfIFrame}
           src={`/pdfjs/viewer/viewer.html?file=${encodeURI(props.file)}#page=${
-            props.defaultPage ?? 1
+            (props.defaultPage ?? 0) + 1
           }`}
         />
       )}
     </>
   );
-}
+});
+
+export default PDFViewer;

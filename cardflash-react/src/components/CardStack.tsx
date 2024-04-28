@@ -11,11 +11,11 @@ import {
 import { TiArrowBackOutline } from "react-icons/ti";
 import { Button } from "./ui/button";
 
-import "katex/dist/katex.min.css";
-import renderMathInElement from "katex/contrib/auto-render";
 import { Flashcard, updateFlashcard } from "@/lib/storage";
+import renderMathInElement from "katex/contrib/auto-render";
+import "katex/dist/katex.min.css";
 import { LuDices } from "react-icons/lu";
-import { Link } from "@tanstack/react-router";
+import Card from "./Card";
 const MAX_NUMBER_OF_CARDS_SHOWN = 7;
 const spring = {
   type: "spring",
@@ -141,6 +141,7 @@ export const CardStack = ({
       });
     }
   }, [cards]);
+
   return (
     <div className="w-full" ref={activeCardRef}>
       <h2 className="text-lg text-left mb-2">
@@ -188,78 +189,19 @@ export const CardStack = ({
                   height: "100%",
                 }}
               >
-                <div
-                  className="select-none h-full"
-                  style={{
-                    perspective: "1200px",
-                    transformStyle: "preserve-3d",
-                    width: "100%",
-                    height: "100%",
-                  }}
-                >
-                  <motion.div
-                    className="border p-2 h-full overflow-auto text-left rounded-lg border-gray-300 dark:border-neutral-800 bg-gray-50 dark:bg-slate-950 shadow-xl"
-                    animate={{ rotateY: flipped && index === 0 ? -180 : 0 }}
-                    transition={spring}
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      zIndex: flipped && index === 0 ? 0 : 1,
-                      backfaceVisibility: "hidden",
-                      position: "absolute",
-                    }}
-                  >
-                    {/* <h2 className="text-3xl font-semibold mb-1">
-                      {LL.STUDY.QUESTION()}
-                    </h2> */}
-                    {typeof card.front === "string" && (
-                      <div
-                        className="pl-1 pt-1 editor-prose h-full"
-                        dangerouslySetInnerHTML={{ __html: card.front }}
-                      ></div>
-                    )}
-                    {typeof card.front !== "string" && (
-                      <div className="pl-1 pt-1 max-h-full">{card.front}</div>
-                    )}
-                  </motion.div>
-                  <motion.div
-                    className="border flex flex-col p-2 h-full overflow-auto text-left rounded-lg border-gray-300 dark:border-slate-700 bg-gray-50 dark:bg-slate-900 shadow-lg"
-                    initial={{ rotateY: 180 }}
-                    animate={{ rotateY: flipped && index === 0 ? 0 : 180 }}
-                    transition={spring}
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      zIndex: flipped ? 1 : 0,
-                      backfaceVisibility: "hidden",
-                      position: "absolute",
-                    }}
-                  >
-                    {/* <h2 className="text-3xl font-semibold mb-1">
-                      {LL.STUDY.ANSWER()}
-                    </h2> */}
-                    {typeof card.back === "string" && (
-                      <div
-                        className="pl-1 pt-1 editor-prose"
-                        dangerouslySetInnerHTML={{ __html: card.back }}
-                      ></div>
-                    )}
-                    {typeof card.back !== "string" && (
-                      <div className="pl-1 pt-1">{card.back}</div>
-                    )}
-                    {card.pdfDocumentID && (
-                      <Link
-                        className="underline decoration-foreground/20 hover:decoration-foreground text-gray-800 dark:text-gray-200 mx-auto block mt-auto"
-                        to="/collections/documents/$docID"
-                        params={{ docID: card.pdfDocumentID }}
-                        search={{ page: card.pdfPage }}
-                        onClick={(ev) => ev.stopPropagation()}
-                      >
-                        {LL.VIEW_PDF()}
-                      </Link>
-                    )}
-                  </motion.div>
-                </div>
+                <Card
+                  card={card}
+                  index={index}
+                  flipped={index === 0 && flipped}
+
+                  // visitSource={(source) => {
+                  //   navigate({
+                  //     to: "/collections/documents/$docID",
+                  //     params: { docID: source.documentID },
+                  //     search: { source: { ...source } },
+                  //   });
+                  // }}
+                />
               </motion.div>
             </motion.div>
           ),

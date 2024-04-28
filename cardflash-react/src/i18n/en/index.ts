@@ -93,6 +93,9 @@ const en = {
   CARD_EDITOR: {
     FRONT: "Front",
     BACK: "Back",
+    IS_EDITING: "Editing card",
+    CANCEL_EDITING: "Cancel",
+    SAVE: "Save",
   },
   COLLECTIONS: {
     DELETE_COLLECTION_WARNING:

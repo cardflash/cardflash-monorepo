@@ -255,6 +255,18 @@ type RootTranslation = {
 		 * B​a​c​k
 		 */
 		BACK: string
+		/**
+		 * E​d​i​t​i​n​g​ ​c​a​r​d
+		 */
+		IS_EDITING: string
+		/**
+		 * C​a​n​c​e​l
+		 */
+		CANCEL_EDITING: string
+		/**
+		 * S​a​v​e
+		 */
+		SAVE: string
 	}
 	COLLECTIONS: {
 		/**
@@ -509,6 +521,18 @@ export type TranslationFunctions = {
 		 * Back
 		 */
 		BACK: () => LocalizedString
+		/**
+		 * Editing card
+		 */
+		IS_EDITING: () => LocalizedString
+		/**
+		 * Cancel
+		 */
+		CANCEL_EDITING: () => LocalizedString
+		/**
+		 * Save
+		 */
+		SAVE: () => LocalizedString
 	}
 	COLLECTIONS: {
 		/**

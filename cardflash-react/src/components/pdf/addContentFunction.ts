@@ -1,8 +1,10 @@
+import { SourceLinkAttributes } from "../simple-editor/SourceLink";
+
 export type AddableContent =
   | { type: "image"; dataURL: string }
   | { type: "text"; text: string };
 export type AddContentFunction = (
   content: AddableContent,
-  pdfInfo: { pdfDocumentID: string; pdfPage: number },
+  source: SourceLinkAttributes,
   side: "front" | "back",
 ) => unknown;

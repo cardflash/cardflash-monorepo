@@ -3,12 +3,13 @@ import clsx from "clsx";
 import { motion } from "framer-motion";
 import debounce from "lodash.debounce";
 import { LucideImagePlus } from "lucide-react";
+import type { PDFPageView } from "pdfjs-dist/types/web/pdf_page_view";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { BsExclamationSquareFill, BsQuestionSquareFill } from "react-icons/bs";
 import { IoAdd, IoClose } from "react-icons/io5";
 import { PiSelectionPlusBold } from "react-icons/pi";
-import { AddableContent } from "./addContentFunction";
+import { AddContentFunction } from "./addContentFunction";
 
 const DRAG_HANDLER_POSITIONS = [
   "TOP-LEFT",
@@ -57,22 +58,21 @@ function removeCanvasBG(
   ctx.putImageData(imgData, 0, 0);
 }
 
-function addImageSel(
-  sel: RectangleSelection,
+function getPageFromPosition(
+  position: { x: number; y: number },
   pdfViewerApp: PDFViewerApplication,
-  previewCanvas: HTMLCanvasElement,
 ) {
-  let pageIndex = pdfViewerApp.page - 1;
+  let pageIndex = pdfViewerApp.page;
   let pageFound = false;
   while (!pageFound) {
-    const page = pdfViewerApp.pdfViewer._pages![pageIndex];
+    const page: PDFPageView = pdfViewerApp.pdfViewer.getPageView(pageIndex);
     if (!page) {
       console.warn("No page?!");
       return;
     }
-    const pageCanvas: HTMLCanvasElement = page?.canvas;
+    const pageCanvas: HTMLCanvasElement = page.canvas!;
     const pageCanvasRect = pageCanvas.getBoundingClientRect();
-    if (pageCanvasRect.y > sel.y1 && pageCanvasRect.y > sel.y2) {
+    if (pageCanvasRect.y > position.y) {
       pageIndex--;
       if (pageIndex < 0) {
         console.error(
@@ -81,7 +81,7 @@ function addImageSel(
         break;
       }
       continue;
-    } else if (sel.y1 > pageCanvasRect.y + pageCanvasRect.height) {
+    } else if (position.y > pageCanvasRect.y + pageCanvasRect.height) {
       pageIndex++;
       if (pageIndex >= pdfViewerApp.pagesCount) {
         console.error(
@@ -92,42 +92,56 @@ function addImageSel(
       continue;
     }
     pageFound = true;
-    const scale: number = 1.0;
-    const outputScale: { sx: number; sy: number } = page.outputScale;
-    const pageCtx = pageCanvas.getContext("2d")!;
-    const x = sel.x1 - pageCanvasRect.x;
-    const y = sel.y1 - pageCanvasRect.y;
-    const width = sel.x2 - sel.x1;
-    const height = sel.y2 - sel.y1;
-    const imgData = pageCtx.getImageData(
-      scale * x * outputScale.sx,
-      scale * y * outputScale.sy,
-      scale * width * outputScale.sx,
-      scale * height * outputScale.sy,
-    );
-    const previewCtx = previewCanvas.getContext("2d")!;
-    previewCanvas.width = scale * width * outputScale.sx;
-    previewCanvas.height = scale * height * outputScale.sy;
-    previewCtx.putImageData(imgData, 0, 0);
-    removeCanvasBG(previewCtx, previewCanvas.width, previewCanvas.height);
-    const dataURL = previewCanvas.toDataURL();
-    previewCanvas.width = 0;
-    previewCanvas.height = 0;
-    previewCtx.clearRect(0, 0, scale * width, scale * height);
-    return dataURL;
+    return { pageIndex, pageCanvas, page, pageCanvasRect };
   }
+}
+function addImageSel(
+  sel: RectangleSelection,
+  pdfViewerApp: PDFViewerApplication,
+  previewCanvas: HTMLCanvasElement,
+) {
+  const pageInfo = getPageFromPosition({ x: sel.x1, y: sel.y1 }, pdfViewerApp);
+  if (!pageInfo) {
+    return undefined;
+  }
+  const { page, pageCanvasRect, pageCanvas } = pageInfo;
+  const scale: number = 1.0;
+  const outputScale: { sx: number; sy: number } = page.outputScale ?? {
+    sx: 1,
+    sy: 1,
+  };
+  const pageCtx = pageCanvas.getContext("2d")!;
+  const x = sel.x1 - pageCanvasRect.x;
+  const y = sel.y1 - pageCanvasRect.y;
+  const width = sel.x2 - sel.x1;
+  const height = sel.y2 - sel.y1;
+  const [pdfX, pdfY] = page.viewport.convertToPdfPoint(x, y);
+  const [pdfX2, pdfY2] = page.viewport.convertToPdfPoint(x + width, y + height);
+  const imgData = pageCtx.getImageData(
+    scale * x * outputScale.sx,
+    scale * y * outputScale.sy,
+    scale * width * outputScale.sx,
+    scale * height * outputScale.sy,
+  );
+  const previewCtx = previewCanvas.getContext("2d")!;
+  previewCanvas.width = scale * width * outputScale.sx;
+  previewCanvas.height = scale * height * outputScale.sy;
+  previewCtx.putImageData(imgData, 0, 0);
+  removeCanvasBG(previewCtx, previewCanvas.width, previewCanvas.height);
+  const dataURL = previewCanvas.toDataURL();
+  previewCanvas.width = 0;
+  previewCanvas.height = 0;
+  previewCtx.clearRect(0, 0, scale * width, scale * height);
+  return { dataURL, pdfX, pdfY, pdfX2, pdfY2, pageNumber: pageInfo.pageIndex };
 }
 
 type RectangleSelection = { x1: number; y1: number; x2: number; y2: number };
 
 interface InsidePDFIFrameWrapperProps {
-  addContent: (
-    content: AddableContent,
-    pdfPage: number,
-    side: "front" | "back",
-  ) => unknown;
+  addContent: AddContentFunction;
   iframeWindow: Window;
   pdfViewerApp: { current?: PDFViewerApplication };
+  documentID: string;
 }
 
 export default function InsidePDFIFrameWrapper(
@@ -139,9 +153,11 @@ export default function InsidePDFIFrameWrapper(
   const dirRef = useRef<(typeof DRAG_HANDLER_POSITIONS)[number]>();
   const pointerDown = useRef(false);
   const [textSelPos, setTextSelPos] = useState<{
-    x: number;
-    y: number;
+    position: { x: number; y: number };
     el: HTMLDivElement;
+    pdfPage: number;
+    pdfPosition: { x: number; y: number };
+    pdfRectSize: { width: number; height: number };
   }>();
   const [activeSide, setActiveSide] = useState<"front" | "back">("front");
 
@@ -196,11 +212,39 @@ export default function InsidePDFIFrameWrapper(
         const pageRect = el.parentElement.getBoundingClientRect();
         el.parentElement.appendChild(div);
         // Element used in portal below
-        setTextSelPos({
-          y: rect.y - pageRect.top,
-          x: rect.x + rect.width - pageRect.left + 15,
-          el: div,
-        });
+
+        if (!props.pdfViewerApp.current) {
+          return;
+        }
+        const pageNumber = parseInt(
+          el.parentElement?.dataset.pageNumber ?? "-1",
+        );
+        if (!isNaN(pageNumber) && pageNumber > -1) {
+          const pageView: PDFPageView =
+            props.pdfViewerApp!.current!.pdfViewer.getPageView(pageNumber - 1);
+          const pageCanvasRect = pageView.canvas!.getBoundingClientRect();
+          const [pdfX, pdfY] = pageView.viewport.convertToPdfPoint(
+            rect.x - pageCanvasRect.x,
+            rect.y - pageCanvasRect.y,
+          ) as [number, number];
+          const [pdfX2, pdfY2] = pageView.viewport.convertToPdfPoint(
+            rect.x - pageCanvasRect.x + rect.width,
+            rect.y - pageCanvasRect.y + rect.height,
+          ) as [number, number];
+          setTextSelPos({
+            pdfPage: pageNumber,
+            position: {
+              y: rect.y - pageRect.top,
+              x: rect.x + rect.width - pageRect.left + 15,
+            },
+            el: div,
+            pdfPosition: {
+              x: pdfX,
+              y: pdfY,
+            },
+            pdfRectSize: { width: pdfX2 - pdfX, height: pdfY2 - pdfY },
+          });
+        }
       }
     },
     500,
@@ -257,13 +301,12 @@ export default function InsidePDFIFrameWrapper(
         debounceTextSelFun(true);
         return;
       }
-      if (sel && sel.focusNode) {
-        if (
-          sel.focusNode.parentElement?.parentElement?.className === "textLayer"
-        ) {
-          const el = sel.focusNode.parentElement.parentElement;
-          debounceTextSelFun(false, el);
-        }
+      let el: HTMLElement | null | undefined = sel?.focusNode?.parentElement;
+      while (el != null && el.className !== "textLayer") {
+        el = el.parentElement;
+      }
+      if (sel && el) {
+        debounceTextSelFun(false, el);
       }
     };
     props.iframeWindow.document.addEventListener(
@@ -286,7 +329,10 @@ export default function InsidePDFIFrameWrapper(
         textSelPos !== undefined &&
         createPortal(
           <div
-            style={{ top: textSelPos.y + "px", left: textSelPos.x + "px" }}
+            style={{
+              top: textSelPos.position.y + "px",
+              left: textSelPos.position.x + "px",
+            }}
             className="z-10 absolute flex-col items-center justify-center gap-y-1 pointer-events-auto flex"
           >
             <button
@@ -300,7 +346,12 @@ export default function InsidePDFIFrameWrapper(
                       props.iframeWindow.document.getSelection()?.toString() ??
                       "-",
                   },
-                  props.pdfViewerApp.current?.page ?? 1,
+                  {
+                    documentID: props.documentID,
+                    page: textSelPos.pdfPage - 1,
+                    ...textSelPos.pdfPosition,
+                    ...textSelPos.pdfRectSize,
+                  },
                   activeSide,
                 );
                 setTextSelPos(undefined);
@@ -438,15 +489,23 @@ export default function InsidePDFIFrameWrapper(
                     if (props.pdfViewerApp.current && canvasRef.current) {
                       // Ensure that x1 <= x2, y1 <= y2
                       organizeSel();
-                      const dataURL = addImageSel(
+                      const imgSel = addImageSel(
                         { ...selRef.current },
                         props.pdfViewerApp.current,
                         canvasRef.current,
                       );
-                      if (dataURL) {
+                      if (imgSel) {
+                        console.log({ imgSel });
                         props.addContent(
-                          { type: "image", dataURL },
-                          props.pdfViewerApp.current.page,
+                          { type: "image", dataURL: imgSel.dataURL },
+                          {
+                            page: imgSel.pageNumber,
+                            documentID: props.documentID,
+                            x: imgSel.pdfX,
+                            y: imgSel.pdfY2,
+                            width: imgSel.pdfX2 - imgSel.pdfX,
+                            height: imgSel.pdfY - imgSel.pdfY2,
+                          },
                           activeSide,
                         );
                         selRef.current = undefined;

@@ -13,6 +13,7 @@ import { createFileRoute } from '@tanstack/react-router'
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as CollectionsDocumentsDocIDImport } from './routes/collections_/documents_/$docID'
 
 // Create Virtual Routes
 
@@ -22,9 +23,6 @@ const CollectionsLazyImport = createFileRoute('/collections')()
 const IndexLazyImport = createFileRoute('/')()
 const CollectionsCollectionIDLazyImport = createFileRoute(
   '/collections/$collectionID',
-)()
-const CollectionsDocumentsDocIDLazyImport = createFileRoute(
-  '/collections/documents/$docID',
 )()
 
 // Create/Update Routes
@@ -57,13 +55,12 @@ const CollectionsCollectionIDLazyRoute =
     import('./routes/collections_/$collectionID.lazy').then((d) => d.Route),
   )
 
-const CollectionsDocumentsDocIDLazyRoute =
-  CollectionsDocumentsDocIDLazyImport.update({
-    path: '/collections/documents/$docID',
-    getParentRoute: () => rootRoute,
-  } as any).lazy(() =>
-    import('./routes/collections_/documents_/$docID.lazy').then((d) => d.Route),
-  )
+const CollectionsDocumentsDocIDRoute = CollectionsDocumentsDocIDImport.update({
+  path: '/collections/documents/$docID',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() =>
+  import('./routes/collections_/documents_/$docID.lazy').then((d) => d.Route),
+)
 
 // Populate the FileRoutesByPath interface
 
@@ -90,7 +87,7 @@ declare module '@tanstack/react-router' {
       parentRoute: typeof rootRoute
     }
     '/collections/documents/$docID': {
-      preLoaderRoute: typeof CollectionsDocumentsDocIDLazyImport
+      preLoaderRoute: typeof CollectionsDocumentsDocIDImport
       parentRoute: typeof rootRoute
     }
   }
@@ -104,7 +101,7 @@ export const routeTree = rootRoute.addChildren([
   SettingsLazyRoute,
   StudyLazyRoute,
   CollectionsCollectionIDLazyRoute,
-  CollectionsDocumentsDocIDLazyRoute,
+  CollectionsDocumentsDocIDRoute,
 ])
 
 /* prettier-ignore-end */

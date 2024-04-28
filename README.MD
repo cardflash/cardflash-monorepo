@@ -10,6 +10,7 @@ __Note: This repository contains the newest revamped version of Cardflash, writt
 
 
 ## Screenshots
+![Linked Flashcards](https://github.com/cardflash/cardflash-monorepo/assets/20766652/c293788c-b7e5-4c39-a28b-a1e395af0214)
 
 
 ## Features

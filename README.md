@@ -8,6 +8,10 @@ This allows users to go directly to the exact location of the source in the docu
 __Note: This repository contains the newest revamped version of Cardflash, written in React__. For the __previous Angular version__, see [github.com/cardflash/cardflash-angular](https://github.com/cardflash/cardflash-angular).
 
 
+A free hosted version of Cardflash is available at __[app.cardflash.net](https://app.cardflash.net)__.
+Just head there to give Carflash a try live!
+
+Apart from that, Cardflash can, of course, also easily be self-hosted (currently as a static frontend SPA). 
 
 ## Screenshots
 ![Linked Flashcards](https://github.com/cardflash/cardflash-monorepo/assets/20766652/c293788c-b7e5-4c39-a28b-a1e395af0214)

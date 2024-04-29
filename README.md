@@ -23,7 +23,26 @@ Apart from that, Cardflash can, of course, also easily be self-hosted (currently
 - __Study flashcards__ using spaced repetition
 - Beautiful and intuitive user interface (on Desktop and Mobile)
 
+## Tutorial
+### Creating a Collection
+1. Navigate to the collections page using the menu button on the right (or on the bottom on mobile)
+![Screenshot showing the Collections Page Navigation Button](https://github.com/cardflash/cardflash-monorepo/assets/20766652/379651b6-6103-4b63-b3f5-a2235555f039)
+2. Click on the `Add...` button and enter the name of the new collection (e.g., the name of your lecture)
 
+### Adding Documents (Source Material) to a Collection
+1. Navigate to the collections page and click on the collection you want to add your material to
+2. Select the PDF file you want to add from your device
+![Screenshot of a collections page with a dropzone for PDF files](https://github.com/cardflash/cardflash-monorepo/assets/20766652/a8e053e1-e91c-462c-99a3-ddcca24c459a)
+
+### Creating Flashcards
+1. Navigate to the document you want to create cards for
+2. Select content from the PDF Viewer to add them to a flashcard
+   - For text, simply select the text in the PDF viewer. After a small delay, options to add this text will appear to the right of the selection.
+        - ![Screenshot of an active text selection](https://github.com/cardflash/cardflash-monorepo/assets/20766652/f8669517-3a74-4365-a169-ab59b7dd9a87)
+   - For an image area, first toggle area selection mode using the button on the bottom. The PDF viewer will become darker and you can click and drag anywhere on the PDF viewer to select an area.
+       - ![Screenshot of an active area selection](https://github.com/cardflash/cardflash-monorepo/assets/20766652/d50ed317-a858-4f27-8557-1f2c7fbc7e44)
+3. When a selection is active, you can toggle between adding it the front or back of the flashcard using the button in the middle. The top button with a `+` will add the selection to the current flashcard.
+4. You can edit the flashcard manually in the `Cards` or `Combined` view (selectable on the top). 
 
 ## Contribution & Tech Stack
 Cardflash is built on top of the great shoulders of web standards and web technology.

@@ -140,13 +140,18 @@ function SingleDocumentView({
   const [isEditingCard, setIsEditingCard] = useState<Flashcard>();
 
   const visitSource = async (source: SourceLinkAttributes) => {
+    let tabChanged = false;
     setActiveTab((tab) => {
       if (tab === "cards") {
+        tabChanged = true;
         return window.innerWidth > 1024 ? "combined" : "pdf-viewer";
       } else {
         return tab;
       }
     });
+    if (tabChanged) {
+      await new Promise((res) => setTimeout(res, 250));
+    }
     const pdfApplication = pdfViewerRef.current?.getPDFApplication();
     if (pdfApplication) {
       pdfApplication.page = source.page + 1;
@@ -159,6 +164,7 @@ function SingleDocumentView({
         await new Promise((res) => setTimeout(res, 100));
         tries++;
         if (tries > 100) {
+          console.warn("Exceeded 100 tries!");
           return;
         }
       }

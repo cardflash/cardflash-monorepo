@@ -35,13 +35,13 @@ Apart from that, Cardflash can, of course, also easily be self-hosted (currently
 ![Screenshot of a collections page with a dropzone for PDF files](https://github.com/cardflash/cardflash-monorepo/assets/20766652/a8e053e1-e91c-462c-99a3-ddcca24c459a)
 
 ### Creating Flashcards
-1. Navigate to the document you want to create cards for
+1. Navigate to the document you wish to create cards for
 2. Select content from the PDF Viewer to add them to a flashcard
    - For text, simply select the text in the PDF viewer. After a small delay, options to add this text will appear to the right of the selection.
         - ![Screenshot of an active text selection](https://github.com/cardflash/cardflash-monorepo/assets/20766652/f8669517-3a74-4365-a169-ab59b7dd9a87)
-   - For an image area, first toggle area selection mode using the button on the bottom. The PDF viewer will become darker and you can click and drag anywhere on the PDF viewer to select an area.
+   - For an image area, first toggle area selection mode using the button on the bottom. The PDF viewer will become darker, and you can click and drag anywhere on the PDF viewer to select an area.
        - ![Screenshot of an active area selection](https://github.com/cardflash/cardflash-monorepo/assets/20766652/d50ed317-a858-4f27-8557-1f2c7fbc7e44)
-3. When a selection is active, you can toggle between adding it the front or back of the flashcard using the button in the middle. The top button with a `+` will add the selection to the current flashcard.
+3. When a selection is active, you can toggle between adding it to the front or back of the flashcard using the button in the middle. The top button with a `+` will add the selection to the current flashcard.
 4. You can edit the flashcard manually in the `Cards` or `Combined` view (selectable on the top). 
 
 ## Contribution & Tech Stack

@@ -140,6 +140,13 @@ function SingleDocumentView({
   const [isEditingCard, setIsEditingCard] = useState<Flashcard>();
 
   const visitSource = async (source: SourceLinkAttributes) => {
+    setActiveTab((tab) => {
+      if (tab === "cards") {
+        return window.innerWidth > 1024 ? "combined" : "pdf-viewer";
+      } else {
+        return tab;
+      }
+    });
     const pdfApplication = pdfViewerRef.current?.getPDFApplication();
     if (pdfApplication) {
       pdfApplication.page = source.page + 1;
@@ -158,7 +165,6 @@ function SingleDocumentView({
       const page: PDFPageView = pdfApplication.pdfViewer.getPageView(
         source.page,
       );
-      console.log(page.renderingState, tries);
       const newCanvas = page.canvas!.ownerDocument.createElement("canvas");
       newCanvas.style.position = "absolute";
       newCanvas.style.width = "100%";
@@ -194,6 +200,9 @@ function SingleDocumentView({
       ctx.fill();
 
       setTimeout(() => {
+        ctx.clearRect(0, 0, newCanvas.width, newCanvas.height);
+        newCanvas.height = 1;
+        newCanvas.width = 1;
         page!.canvas?.parentElement?.removeChild(newCanvas);
       }, 1.5 * 1000);
     }

@@ -5,12 +5,12 @@ import { Link, ReactNode } from "@tanstack/react-router";
 export default function ErrorView(props: {
   code?: string;
   description?: string;
-  showHomeButton: boolean;
+  showHomeButton?: boolean;
   children?: ReactNode;
 }) {
   const { LL } = useI18nContext();
   return (
-    <div className="flex flex-col justify-center items-center h-full text-center">
+    <div className="flex flex-col justify-center items-center h-full text-center w-full flex-1">
       <h1 className="text-5xl font-black text-transparent bg-gradient-to-tr from-green-500 to-cyan-500 bg-clip-text">
         {props.code ?? "400"}
       </h1>
@@ -18,7 +18,7 @@ export default function ErrorView(props: {
         {props.description ?? LL.ERROR_PAGE.ERROR()}
       </h1>
       {props.children}
-      {props.showHomeButton && (
+      {props.showHomeButton !== false && (
         <Link to="/">
           <Button className="my-2 block">{LL.ROUTES.HOME()}</Button>
         </Link>

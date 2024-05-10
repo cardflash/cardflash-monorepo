@@ -1,8 +1,10 @@
+import ErrorView from "@/components/ErrorView";
 import AlertHelper from "@/components/ui/AlertHelper";
 import FileDropZone from "@/components/ui/FileDropZone";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useI18nContext } from "@/i18n/i18n-react";
 import {
   Collection,
@@ -46,9 +48,15 @@ function SingleCollectionPage() {
     },
   });
 
-  if (isPending) return "Loading...";
-
-  if (error) return "An error has occurred: " + error.message;
+  if (error)
+    return (
+      <ErrorView>
+        {" "}
+        <Link to="/collections">
+          <Button className="my-2 block">{LL.ROUTES.COLLECTIONS()}</Button>
+        </Link>
+      </ErrorView>
+    );
   return (
     <div
       className={clsx(
@@ -61,12 +69,14 @@ function SingleCollectionPage() {
         </h2>
       </Link>
       <h1 className="text-4xl xl:text-5xl font-black">
-        {data.collection.name}
+        {data && data.collection.name}
+        {isPending && <Skeleton className="w-[12ch] h-[3.5rem]" />}
       </h1>
       <div className="flex gap-x-1">
         <AlertHelper
           trigger={
             <Button
+              disabled={isPending}
               size="icon"
               variant="ghost"
               title={LL.DELETE()}
@@ -85,72 +95,77 @@ function SingleCollectionPage() {
           submitAction={LL.DELETE()}
           mode="promise"
           onSubmit={async () => {
-            await deleteCollection(data.collection.id);
+            await deleteCollection(data!.collection.id);
             await queryClient.invalidateQueries({ queryKey: ["collections"] });
             await queryClient.invalidateQueries({ queryKey: ["flashcards"] });
             navigate({ to: "/collections" });
           }}
         />
 
-        <AlertHelper
-          trigger={
-            <Button
-              size="icon"
-              variant="ghost"
-              title={LL.EDIT()}
-              className="shrink-0"
-            >
-              <FiEdit />
-            </Button>
-          }
-          title={LL.EDIT()}
-          initialData={data.collection}
-          content={({ data, setData, submit }) => (
-            <div className="grid gap-y-2">
-              <Label>{LL.NAME()}</Label>
-              <Input
-                autoFocus
-                value={data.name}
-                onChange={(ev) =>
-                  setData({ ...data, name: ev.currentTarget.value })
-                }
-                onKeyDown={(ev) => {
-                  if (ev.key === "Enter") {
-                    submit(ev);
-                  }
-                }}
-              />
-            </div>
-          )}
-          submitAction={LL.SAVE()}
-          mode="promise"
-          onSubmit={async (data, ev) => {
-            if (data.name.length > 0) {
-              await updateCollection(data);
-              await queryClient.invalidateQueries({
-                queryKey: [`collection-${collectionID}`],
-              });
-            } else {
-              if (ev) {
-                ev.preventDefault();
-              }
+        {data && (
+          <AlertHelper
+            trigger={
+              <Button
+                size="icon"
+                variant="ghost"
+                title={LL.EDIT()}
+                className="shrink-0"
+              >
+                <FiEdit />
+              </Button>
             }
-          }}
-        />
+            title={LL.EDIT()}
+            initialData={data.collection}
+            content={({ data, setData, submit }) => (
+              <div className="grid gap-y-2">
+                <Label>{LL.NAME()}</Label>
+                <Input
+                  autoFocus
+                  value={data.name}
+                  onChange={(ev) =>
+                    setData({ ...data, name: ev.currentTarget.value })
+                  }
+                  onKeyDown={(ev) => {
+                    if (ev.key === "Enter") {
+                      submit(ev);
+                    }
+                  }}
+                />
+              </div>
+            )}
+            submitAction={LL.SAVE()}
+            mode="promise"
+            onSubmit={async (data, ev) => {
+              if (data.name.length > 0) {
+                await updateCollection(data);
+                await queryClient.invalidateQueries({
+                  queryKey: [`collection-${collectionID}`],
+                });
+              } else {
+                if (ev) {
+                  ev.preventDefault();
+                }
+              }
+            }}
+          />
+        )}
       </div>
-      <div className="mt-8 w-full h-full">
-        <h2 className="text-2xl font-black mb-1">{LL.CARDS()}</h2>
-        <p>
-          {data.counts.numFlashcards} {LL.CARDS()}
-        </p>
-        <Link
-          to="/collections/$collectionID/study"
-          params={{ collectionID: collectionID }}
-        >
-          <Button variant="outline">{LL.STUDY_ALL()}</Button>
-        </Link>
-        <CollectionDocuments collection={data.collection} />
-      </div>
+      {isPending && <Skeleton className="w-full h-full flex-1" />}
+      {data && (
+        <div className="mt-8 w-full h-full">
+          <h2 className="text-2xl font-black mb-1">{LL.CARDS()}</h2>
+          <p>
+            {data.counts.numFlashcards} {LL.CARDS()}
+          </p>
+          <Link
+            to="/collections/$collectionID/study"
+            params={{ collectionID: collectionID }}
+          >
+            <Button variant="outline">{LL.STUDY_ALL()}</Button>
+          </Link>
+          <CollectionDocuments collection={data.collection} />
+        </div>
+      )}
     </div>
   );
 }

@@ -1,7 +1,9 @@
+import ErrorView from "@/components/ErrorView";
 import AlertHelper from "@/components/ui/AlertHelper";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useI18nContext } from "@/i18n/i18n-react";
 import {
   createCollection,
@@ -62,15 +64,13 @@ function DocumentOverview() {
     },
   });
 
-  if (isPending) return "Loading...";
-
-  if (error) return "An error has occurred: " + error.message;
+  if (error) return <ErrorView></ErrorView>;
 
   return (
     <div className="w-full h-full">
       <AlertHelper
         trigger={
-          <Button title={LL.EDIT()}>
+          <Button title={LL.EDIT()} disabled={isPending}>
             <IoAddCircleOutline size={18} className="mr-1" />
             {LL.ADD()}...
           </Button>
@@ -111,26 +111,31 @@ function DocumentOverview() {
         }}
       />
       <ul className="mt-4 flex flex-wrap gap-2">
-        {data.map((d) => (
-          <Link
-            key={d.col.id}
-            className="w-full min-h-12 border dark:border-slate-700 rounded px-2 py-1 flex items-center gap-x-4 hover:bg-gray-50 dark:hover:bg-gray-900"
-            to="/collections/$collectionID"
-            params={{ collectionID: d.col.id }}
-          >
-            <div>
-              {d.counts.numDocs > 0 && <IoFileTrayFullOutline size={32} />}
+        {isPending &&
+          [0, 1, 2, 3].map((i) => (
+            <Skeleton key={i} className="w-full h-24"></Skeleton>
+          ))}
+        {!isPending &&
+          data.map((d) => (
+            <Link
+              key={d.col.id}
+              className="w-full min-h-12 border dark:border-slate-700 rounded px-2 py-1 flex items-center gap-x-4 hover:bg-gray-50 dark:hover:bg-gray-900"
+              to="/collections/$collectionID"
+              params={{ collectionID: d.col.id }}
+            >
+              <div>
+                {d.counts.numDocs > 0 && <IoFileTrayFullOutline size={32} />}
 
-              {d.counts.numDocs === 0 && <IoFileTrayOutline size={32} />}
-            </div>
-            <div>
-              <h3 className="font-semibold text-lg">{d.col.name}</h3>
-              {d.counts.numDocs} {LL.ROUTES.DOCUMENTS()}
-              <br />
-              {d.counts.numFlashcards} {LL.CARDS()}
-            </div>
-          </Link>
-        ))}
+                {d.counts.numDocs === 0 && <IoFileTrayOutline size={32} />}
+              </div>
+              <div>
+                <h3 className="font-semibold text-lg">{d.col.name}</h3>
+                {d.counts.numDocs} {LL.ROUTES.DOCUMENTS()}
+                <br />
+                {d.counts.numFlashcards} {LL.CARDS()}
+              </div>
+            </Link>
+          ))}
       </ul>
     </div>
   );

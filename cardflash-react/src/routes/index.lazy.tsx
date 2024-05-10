@@ -1,13 +1,15 @@
-import { CardStack } from "@/components/CardStack";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useI18nContext } from "@/i18n/i18n-react";
 import { getSampleCards } from "@/lib/sample-cards";
 import { Link, createLazyFileRoute } from "@tanstack/react-router";
+import { Suspense, lazy } from "react";
 
 export const Route = createLazyFileRoute("/")({
   component: Index,
 });
 
 function Index() {
+  const CardStackLazy = lazy(() => import("@/components/CardStack"));
   const { LL } = useI18nContext();
   return (
     <div className="flex flex-col justify-center items-start max-w-xl mx-auto">
@@ -44,7 +46,9 @@ function Index() {
         <h3 className="text-2xl font-bold">{LL.HOME.EXAMPLE_FLASHCARDS()}</h3>
         <p className="text-xl mt-1">{LL.HOME.EXAMPLE_FLASHCARDS_DESC()}</p>
         <div className="text-center w-full mt-2">
-          <CardStack items={getSampleCards(LL)} />
+          <Suspense fallback={<Skeleton className="w-full h-[20rem]"/>}>
+          <CardStackLazy items={getSampleCards(LL)} />
+          </Suspense>
         </div>
       </div>
     </div>

@@ -52,7 +52,7 @@ function getLocalScore(card: Flashcard, studyAhead = 0) {
   return expScore;
 }
 
-export const CardStack = ({
+const CardStack = ({
   items,
   offset,
   scaleFactor,
@@ -355,3 +355,5 @@ function AnswerBar(props: {
     </div>
   );
 }
+
+export default CardStack;

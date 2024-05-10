@@ -1,4 +1,4 @@
-import { CardStack } from "@/components/CardStack";
+import CardStack from "@/components/CardStack";
 import ErrorView from "@/components/ErrorView";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";

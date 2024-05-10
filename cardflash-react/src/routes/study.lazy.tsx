@@ -1,4 +1,4 @@
-import { CardStack } from "@/components/CardStack";
+import CardStack from "@/components/CardStack";
 import { useI18nContext } from "@/i18n/i18n-react";
 import { listFlashcards } from "@/lib/storage";
 import { useQuery } from "@tanstack/react-query";

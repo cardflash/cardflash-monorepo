@@ -53,6 +53,7 @@ const en = {
     EXAMPLE_FLASHCARDS_DESC: "Below, we present a few sample flashcards showcasing the study interface and providing additional information about cardflash."
   },
   GO_BACK: "Back",
+  GO_BACK_TO_COLLECTION: "Back to collection",
   WELCOME: "Welcome!",
   ADD: "Add",
   EDIT: "Edit",
@@ -63,6 +64,8 @@ const en = {
   SHUFFLE: "Shuffle",
   VIEW_PDF: "View PDF",
   CARDS: "Cards",
+  CARDS_FOR: "Flashcards for",
+  STUDY_ALL: "Study all",
   NUM_CARDS_SCHEDULED: "{0} cards scheduled",
   OF_NUM_CARDS_DONE: "{numDone} of {numTotal} cards done",
   LANGUAGE: "Language",
@@ -97,6 +100,7 @@ const en = {
     CANCEL_EDITING: "Cancel",
     SAVE: "Save",
   },
+  COLLECTION : "Collection",
   COLLECTIONS: {
     DELETE_COLLECTION_WARNING:
       "Are you sure? This will delete all documents and cards in this collection.",

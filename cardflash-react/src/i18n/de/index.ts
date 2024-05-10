@@ -50,6 +50,7 @@ const de = {
   
   },
   GO_BACK: "Zurück",
+  GO_BACK_TO_COLLECTION: "Zurück zur Sammlung",
   WELCOME: "Willkommen!",
   ADD: "Hinzufügen",
   EDIT: "Bearbeiten",
@@ -60,6 +61,8 @@ const de = {
   SHUFFLE: "Mischen",
   VIEW_PDF: "PDF Ansehen",
   CARDS: "Karteikarten",
+  CARDS_FOR: "Karteikarten für",
+  STUDY_ALL: "Alle lernen",
   NUM_CARDS_SCHEDULED: "{0} Karteikarten geplant",
   OF_NUM_CARDS_DONE: "{numDone} von {numTotal} Karteikarten gelernt",
   LANGUAGE: "Sprache",
@@ -94,6 +97,7 @@ const de = {
     CANCEL_EDITING: "Abbrechen",
     SAVE: "Speichern",
   },
+  COLLECTION : "Sammlung",
   COLLECTIONS: {
     DELETE_COLLECTION_WARNING:
       "Bist du sicher? Alle Dokumente und Karteikarten in dieser Sammlung werden gelöscht.",

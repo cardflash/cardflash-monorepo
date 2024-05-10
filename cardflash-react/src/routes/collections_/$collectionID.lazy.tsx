@@ -143,6 +143,12 @@ function SingleCollectionPage() {
         <p>
           {data.counts.numFlashcards} {LL.CARDS()}
         </p>
+        <Link
+          to="/collections/$collectionID/study"
+          params={{ collectionID: collectionID }}
+        >
+          <Button variant="outline">{LL.STUDY_ALL()}</Button>
+        </Link>
         <CollectionDocuments collection={data.collection} />
       </div>
     </div>

@@ -126,6 +126,10 @@ type RootTranslation = {
 	 */
 	GO_BACK: string
 	/**
+	 * B​a​c​k​ ​t​o​ ​c​o​l​l​e​c​t​i​o​n
+	 */
+	GO_BACK_TO_COLLECTION: string
+	/**
 	 * W​e​l​c​o​m​e​!
 	 */
 	WELCOME: string
@@ -165,6 +169,14 @@ type RootTranslation = {
 	 * C​a​r​d​s
 	 */
 	CARDS: string
+	/**
+	 * F​l​a​s​h​c​a​r​d​s​ ​f​o​r
+	 */
+	CARDS_FOR: string
+	/**
+	 * S​t​u​d​y​ ​a​l​l
+	 */
+	STUDY_ALL: string
 	/**
 	 * {​0​}​ ​c​a​r​d​s​ ​s​c​h​e​d​u​l​e​d
 	 * @param {unknown} 0
@@ -268,6 +280,10 @@ type RootTranslation = {
 		 */
 		SAVE: string
 	}
+	/**
+	 * C​o​l​l​e​c​t​i​o​n
+	 */
+	COLLECTION: string
 	COLLECTIONS: {
 		/**
 		 * A​r​e​ ​y​o​u​ ​s​u​r​e​?​ ​T​h​i​s​ ​w​i​l​l​ ​d​e​l​e​t​e​ ​a​l​l​ ​d​o​c​u​m​e​n​t​s​ ​a​n​d​ ​c​a​r​d​s​ ​i​n​ ​t​h​i​s​ ​c​o​l​l​e​c​t​i​o​n​.
@@ -395,6 +411,10 @@ export type TranslationFunctions = {
 	 */
 	GO_BACK: () => LocalizedString
 	/**
+	 * Back to collection
+	 */
+	GO_BACK_TO_COLLECTION: () => LocalizedString
+	/**
 	 * Welcome!
 	 */
 	WELCOME: () => LocalizedString
@@ -434,6 +454,14 @@ export type TranslationFunctions = {
 	 * Cards
 	 */
 	CARDS: () => LocalizedString
+	/**
+	 * Flashcards for
+	 */
+	CARDS_FOR: () => LocalizedString
+	/**
+	 * Study all
+	 */
+	STUDY_ALL: () => LocalizedString
 	/**
 	 * {0} cards scheduled
 	 */
@@ -534,6 +562,10 @@ export type TranslationFunctions = {
 		 */
 		SAVE: () => LocalizedString
 	}
+	/**
+	 * Collection
+	 */
+	COLLECTION: () => LocalizedString
 	COLLECTIONS: {
 		/**
 		 * Are you sure? This will delete all documents and cards in this collection.

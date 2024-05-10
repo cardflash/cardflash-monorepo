@@ -213,6 +213,17 @@ export async function getCountsForCollection(
   return { numDocs: keys.length, numFlashcards: flashcardKeys.length };
 }
 
+export async function getCardsForCollection(id: string): Promise<Flashcard[]> {
+  const db = await initDB();
+  const keys = await db.getAllKeysFromIndex("documents", "by-collectionID", id);
+  const tx = db.transaction("flashcards");
+  const txIndex = tx.store.index("by-pdfDocumentID");
+  const flashcards = (
+    await Promise.all(keys.map((key) => txIndex.getAll(key)))
+  ).flat();
+  return flashcards;
+}
+
 // ---------
 
 import { DBSchema, openDB, type IDBPDatabase } from "idb";

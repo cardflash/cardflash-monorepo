@@ -21,20 +21,20 @@ const de = {
       </ul></p>`,
     },
     CARD2: {
-      front: "<h2>Warum muss ich eine PDF auswählen um Karteikarten zu erstellen?</h2>",
+      front: "<h2>Warum muss ich eine PDF auswählen, um Karteikarten zu erstellen?</h2>",
       back: `<p>Bei cardflash sind <b>Karteikarten immer genau mit der Quelle</b> des abgefragten Wissens <b>verknüpft</b>.
       <br/>
       So kannst du beim Lernen super einfach mehr Informationen nachlesen oder Unklarheiten ausräumen.
       <br/>
       <br/>
-      Im Moment sind nur PDF-Dateien als Quellenmaterial unterstützt. Du kannst aber auch Websites oder andere Quellen als PDF exportieren und so auch diese in cardflash nutzen.</p>`,
+      Derzeit werden nur PDF-Dateien als Quellenmaterial unterstützt. Du kannst aber auch Websites oder andere Quellen als PDF exportieren und so auch diese in cardflash nutzen.</p>`,
     },
     CARD3: {
       front:
         "<h2>Kann ich die Sprache vom Interface ändern?</h2>",
       back: `<p>Na klar! In den <a href="/settings">Einstellungen</a> kannst du die Sprache ändern.
       <br/>
-      Im Moment sind Deutsch und Deutsch als Sprachen verfügbar.</p>`,
+      Momentan sind Deutsch und Englisch als Sprachen verfügbar.</p>`,
     },
   },
   HOME: {
@@ -46,7 +46,7 @@ const de = {
     STUDY_FLASHCARDS: "Um all deine erstellten Karteikarten zu lernen, klicke",
     HERE: "hier",
     EXAMPLE_FLASHCARDS: "Beispiel Karteikarten",
-    EXAMPLE_FLASHCARDS_DESC: "Hier unten findest du ein paar Beispiel Karteikarten die das Lerninterface zeigen und zudem zusätztliche Informationen über cardflash vorstellen."
+    EXAMPLE_FLASHCARDS_DESC: "Hier unten findest du ein paar Beispiel-Karteikarten, die das Lerninterface zeigen und zudem zusätzliche Informationen über cardflash vorstellen."
   
   },
   GO_BACK: "Zurück",

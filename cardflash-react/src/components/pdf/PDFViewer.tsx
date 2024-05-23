@@ -1,5 +1,11 @@
 import { PDFViewerApplication } from "@/lib/pdf-types";
-import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
+import {
+  forwardRef,
+  memo,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+} from "react";
 import { createRoot } from "react-dom/client";
 import InsidePDFIFrameWrapper from "./InsidePDFIFrameWrapper";
 import { AddableContent } from "./addContentFunction";
@@ -19,7 +25,7 @@ interface PDFViewerProps {
 
 const LINK_EL_IFRAME_ID = "cardflash-styles";
 
-export const PDFViewer = forwardRef<
+const PDFViewer = forwardRef<
   {
     getPDFApplication: () => PDFViewerApplication | undefined;
   },
@@ -27,7 +33,6 @@ export const PDFViewer = forwardRef<
 >((props, ref) => {
   const pdfIFrame = useRef<HTMLIFrameElement>(null);
   const pdfViewerApp = useRef<PDFViewerApplication>();
-
   function addCSSToIFrameWindow(w: Window) {
     const prev = w.document.getElementById(LINK_EL_IFRAME_ID);
     if (prev) {
@@ -142,9 +147,8 @@ export const PDFViewer = forwardRef<
               if (w.PDFViewerApplication) {
                 await w.PDFViewerApplication.initializedPromise;
                 pdfViewerApp.current = w.PDFViewerApplication;
-                props.onLoaded && props.onLoaded(w.PDFViewerApplication);
-                // pdfViewerApp.current.preferences.set('sidebarViewOnLoad',0);
-                // addPageRenderListeners(w.PDFViewerApplication.pdfViewer);
+                props.onLoaded !== undefined &&
+                  props.onLoaded(w.PDFViewerApplication);
                 // Handle (initial) dark mode
                 const mql = window.matchMedia("(prefers-color-scheme: dark)");
                 updatePDFDarkMode(mql.matches);
@@ -162,4 +166,5 @@ export const PDFViewer = forwardRef<
   );
 });
 
-export default PDFViewer;
+const PDFViewerMemo = memo(PDFViewer);
+export default PDFViewerMemo;

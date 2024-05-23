@@ -13,6 +13,7 @@ export type PDFDocument = {
   name: string;
   tags: string[];
   collectionID: string;
+  currentPage?: number;
 } & BaseSavedDocument;
 
 export async function createPDFDocument(data: {
@@ -210,7 +211,11 @@ export async function deletePDFDocument(id: string): Promise<void> {
     id,
   );
   await Promise.all(keys.map((k) => db.delete("flashcards", k)));
+  const doc = await db.get("documents",id);
   await db.delete("documents", id);
+  if(doc?.attachmentID != null){
+    await db.delete("attachments",doc?.attachmentID)
+  }
 }
 
 export async function deleteCollection(id: string): Promise<void> {

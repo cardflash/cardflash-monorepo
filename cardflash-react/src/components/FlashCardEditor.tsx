@@ -2,7 +2,7 @@ import { useI18nContext } from "@/i18n/i18n-react";
 import { PDFDocument } from "@/lib/storage";
 import type { Editor } from "@tiptap/core";
 import { generateJSON } from "@tiptap/react";
-import { forwardRef, useImperativeHandle, useMemo, useRef } from "react";
+import { forwardRef, useCallback, useImperativeHandle, useMemo, useRef } from "react";
 import SimpleEditor from "./SimpleEditor";
 import { AddContentFunction } from "./pdf/addContentFunction";
 import { Label } from "./ui/label";
@@ -19,46 +19,43 @@ export const FlashCardEditor = forwardRef<
   const frontEditorRef = useRef<Editor>();
   const backEditorRef = useRef<Editor>();
   const { LL } = useI18nContext();
-  const addContent = useMemo<AddContentFunction>(
-    () => (content, source, side) => {
-      const editor =
-        side === "front" ? frontEditorRef.current! : backEditorRef.current!;
-      if (content.type === "image") {
-        editor.commands.insertContent(
-          [
+  const addContent = useCallback<AddContentFunction>((content, source, side) => {
+    const editor =
+      side === "front" ? frontEditorRef.current! : backEditorRef.current!;
+    if (content.type === "image") {
+      editor.commands.insertContent(
+        [
+          {
+            type: "image",
+            attrs: {
+              src: content.dataURL,
+              title: "Image",
+              alt: "Invert",
+            },
+          },
+          { type: "sourceLink", attrs: source },
+        ],
+        { updateSelection: true },
+      );
+    } else if (content.type === "text") {
+      editor.commands.insertContent(
+        {
+          type: "heading",
+          attrs: {
+            level: 2,
+          },
+          content: [
             {
-              type: "image",
-              attrs: {
-                src: content.dataURL,
-                title: "Image",
-                alt: "Invert",
-              },
+              type: "text",
+              text: content.text + " ",
             },
             { type: "sourceLink", attrs: source },
           ],
-          { updateSelection: true },
-        );
-      } else if (content.type === "text") {
-        editor.commands.insertContent(
-          {
-            type: "heading",
-            attrs: {
-              level: 2,
-            },
-            content: [
-              {
-                type: "text",
-                text: content.text + " ",
-              },
-              { type: "sourceLink", attrs: source },
-            ],
-          },
-          { updateSelection: true },
-        );
-      }
-    },
-    [],
-  );
+        },
+        { updateSelection: true },
+      );
+    }
+  }, []);
 
   const replaceContent = useMemo(
     () => (front: string, back: string) => {

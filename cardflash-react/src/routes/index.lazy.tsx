@@ -46,8 +46,8 @@ function Index() {
         <h3 className="text-2xl font-bold">{LL.HOME.EXAMPLE_FLASHCARDS()}</h3>
         <p className="text-xl mt-1">{LL.HOME.EXAMPLE_FLASHCARDS_DESC()}</p>
         <div className="text-center w-full mt-2">
-          <Suspense fallback={<Skeleton className="w-full h-[20rem]"/>}>
-          <CardStackLazy items={getSampleCards(LL)} />
+          <Suspense fallback={<Skeleton className="w-full h-[20rem]" />}>
+            <CardStackLazy items={getSampleCards(LL)} />
           </Suspense>
         </div>
       </div>

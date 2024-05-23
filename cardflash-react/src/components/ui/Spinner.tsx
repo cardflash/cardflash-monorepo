@@ -1,6 +1,11 @@
-export default function Spinner() {
+export default function Spinner({
+  style,
+}: {
+  style?: React.CSSProperties | undefined;
+}) {
   return (
     <svg
+      style={style}
       aria-hidden="true"
       className="w-3 h-3 mr-1.5 text-gray-200 animate-spin dark:text-gray-800 fill-black dark:fill-white"
       viewBox="0 0 100 101"

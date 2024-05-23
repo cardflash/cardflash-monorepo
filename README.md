@@ -60,6 +60,8 @@ Data is stored locally in the IndexedDB of the browser, using [idb](https://gith
 
 Routing is implemented using [TanStack Router](https://github.com/TanStack/router), where search parameter validation is done using [zod](https://github.com/colinhacks/zod).
 
+__Note__: The prebuilt PDF.js files are currently not included in this repository.
+Please download the files manually from https://mozilla.github.io/pdf.js/getting_started/#download (Modern Browsers) and place the folders `build` and `web` from the downloaded zip in the `cardflash-react/public/pdfjs` folder, renaming `web` to `viewer`. 
 
 To start developing the project, clone this repository and run the following commands in the `cardflash-react` folder:
 - `npm install`

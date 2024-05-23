@@ -38,6 +38,11 @@ export async function createPDFDocument(data: {
   return doc;
 }
 
+export async function putAttachment(id: string, blob: Blob){
+  const db = await initDB();
+  return await db.put("attachments",blob,id);
+}
+
 export async function listPDFDocumentsForCollection(collectionID: string) {
   const db = await initDB();
   const docs = await db.getAllFromIndex(
@@ -151,6 +156,29 @@ export async function listCollections() {
   const db = await initDB();
   const docs = await db.getAll("collections", undefined, undefined);
   return docs;
+}
+
+export async function listDocuments() {
+  const db = await initDB();
+  const docs = await db.getAll("documents", undefined, undefined);
+  return docs;
+}
+
+export async function listAttachments() {
+  const db = await initDB();
+  const attachmentKeys = await db.getAllKeys(
+    "attachments",
+    undefined,
+    undefined,
+  );
+  const trans = db.transaction("attachments");
+  const attachmentWithKeys = await Promise.all(
+    attachmentKeys.map(async (k) => ({
+      key: k,
+      data: await trans.store.get(k),
+    })),
+  );
+  return attachmentWithKeys;
 }
 
 export async function updateCollection(collection: Collection) {

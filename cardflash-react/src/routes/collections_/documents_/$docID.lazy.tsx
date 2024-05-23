@@ -1,7 +1,10 @@
 import Card from "@/components/Card";
 import FlashCardEditor from "@/components/FlashCardEditor";
 import PDFViewer from "@/components/pdf/PDFViewer";
-import { AddContentFunction } from "@/components/pdf/addContentFunction";
+import {
+  AddContentFunction,
+  AddableContent,
+} from "@/components/pdf/addContentFunction";
 import { SourceLinkAttributes } from "@/components/simple-editor/SourceLink";
 import AlertHelper from "@/components/ui/AlertHelper";
 import { Button } from "@/components/ui/button";
@@ -27,7 +30,7 @@ import type { Editor } from "@tiptap/core";
 import clsx from "clsx";
 import { motion } from "framer-motion";
 import { PDFPageView } from "pdfjs-dist/types/web/pdf_page_view";
-import { useEffect, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { FiEdit, FiTrash } from "react-icons/fi";
 import { IoArrowBack } from "react-icons/io5";
 
@@ -48,6 +51,7 @@ function SingleDocPage() {
         objectURL: URL.createObjectURL(doc.pdfBlob),
       };
     },
+    refetchOnWindowFocus: false,
   });
   useEffect(() => {
     return () => {
@@ -60,7 +64,6 @@ function SingleDocPage() {
   if (isPending) return "Loading...";
 
   if (error) return "An error has occurred: " + error.message;
-
   return (
     <>
       <div className="w-full h-full">
@@ -75,7 +78,9 @@ function SingleDocPage() {
   );
 }
 
-function SingleDocumentView({
+const SingleDocumentView = memo(SingleDocumentViewInner);
+
+function SingleDocumentViewInner({
   objectURL,
   docID,
   doc,
@@ -108,6 +113,7 @@ function SingleDocumentView({
     data: cardData,
   } = useQuery({
     queryKey: [`pdf-document-${docID}-cards`],
+    refetchOnWindowFocus: false,
     queryFn: async () => {
       return {
         cards: await listFlashcardsForDocumentID(docID),
@@ -125,6 +131,11 @@ function SingleDocumentView({
     },
   });
 
+  const updateDoc = useMutation({
+    mutationFn: updatePDFDocument,
+    // Do not invalidate any query; Fetched data is still valid if we only modify page number etc.
+  });
+
   const updateFlashcardMut = useMutation({
     mutationFn: updateFlashcard,
     onSuccess: (c) => {
@@ -139,7 +150,7 @@ function SingleDocumentView({
 
   const [isEditingCard, setIsEditingCard] = useState<Flashcard>();
 
-  const visitSource = async (source: SourceLinkAttributes) => {
+  const visitSource = useCallback(async (source: SourceLinkAttributes) => {
     let tabChanged = false;
     setActiveTab((tab) => {
       if (tab === "cards") {
@@ -212,7 +223,31 @@ function SingleDocumentView({
         page!.canvas?.parentElement?.removeChild(newCanvas);
       }, 1.5 * 1000);
     }
-  };
+  }, []);
+
+  const onLoaded = useCallback(
+    async (pdfViewerApp: PDFViewerApplication) => {
+      pdfViewerApp.eventBus.on("pagechanging", () => {
+        updateDoc.mutate({ ...doc, currentPage: pdfViewerApp.page - 1 });
+      });
+      if (source) {
+        visitSource(source);
+      }
+    },
+    [doc, source, updateDoc, visitSource],
+  );
+
+  const addContent = useCallback(() => {
+    return (
+      content: AddableContent,
+      source: SourceLinkAttributes,
+      side: "front" | "back",
+    ) => {
+      if (flashcardEditorRef.current) {
+        flashcardEditorRef.current!.addContent(content, source, side);
+      }
+    };
+  }, []);
 
   if (isPending) return "Loading...";
 
@@ -356,21 +391,12 @@ function SingleDocumentView({
         >
           {objectURL !== undefined && (
             <PDFViewer
-              onLoaded={async () => {
-                if (source) {
-                  console.log(source);
-                  visitSource(source);
-                }
-              }}
+              onLoaded={onLoaded}
               ref={pdfViewerRef}
               documentID={docID}
-              defaultPage={source?.page}
+              defaultPage={source?.page ?? doc.currentPage}
               file={objectURL}
-              addContent={(content, source, side) => {
-                if (flashcardEditorRef.current) {
-                  flashcardEditorRef.current!.addContent(content, source, side);
-                }
-              }}
+              addContent={addContent}
             />
           )}
         </motion.div>

@@ -93,7 +93,7 @@ function Component(props: {
   return (
     <NodeViewWrapper
       as="button"
-      className="not-prose border rounded inline-flex items-center justify-center w-[1.5rem] h-[1.5rem] text-xs cursor-pointer hover:bg-gray-100 opacity-40 hover:opacity-100"
+      className="not-prose border rounded flex items-center justify-center w-[1.5rem] h-[1.5rem] text-xs cursor-pointer hover:bg-gray-100 opacity-40 hover:opacity-100"
       onClick={(ev: MouseEvent) => {
         ev.preventDefault();
         ev.stopPropagation();
@@ -104,6 +104,7 @@ function Component(props: {
     >
       {props.extension.options.visitSource === undefined && (
         <Link
+          className="w-full h-full flex items-center justify-center"
           target="_blank"
           to="/collections/documents/$docID"
           params={{ docID: props.node.attrs.documentID }}

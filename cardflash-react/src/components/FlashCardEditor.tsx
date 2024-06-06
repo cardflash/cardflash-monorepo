@@ -1,6 +1,6 @@
 import { useI18nContext } from "@/i18n/i18n-react";
 import { PDFDocument } from "@/lib/storage";
-import type { Editor } from "@tiptap/core";
+import type { Editor, Content } from "@tiptap/core";
 import { generateJSON } from "@tiptap/react";
 import {
   forwardRef,
@@ -29,38 +29,39 @@ export const FlashCardEditor = forwardRef<
     (content, source, side) => {
       const editor =
         side === "front" ? frontEditorRef.current! : backEditorRef.current!;
+      editor.commands.deleteSelection();
+      let editorContent: Content = [];
       if (content.type === "image") {
-        editor.commands.insertContent(
-          [
+        editorContent = [
+          {
+            type: "image",
+            attrs: {
+              src: content.dataURL,
+              title: "Image",
+              alt: "Invert",
+            },
+          },
+          { type: "sourceLink", attrs: source },
+        ];
+      } else if (content.type === "text") {
+        editorContent = {
+          type: "heading",
+          attrs: {
+            level: 2,
+          },
+          content: [
             {
-              type: "image",
-              attrs: {
-                src: content.dataURL,
-                title: "Image",
-                alt: "Invert",
-              },
+              type: "text",
+              text: content.text,
             },
             { type: "sourceLink", attrs: source },
           ],
-          { updateSelection: true },
-        );
-      } else if (content.type === "text") {
-        editor.commands.insertContent(
-          {
-            type: "heading",
-            attrs: {
-              level: 2,
-            },
-            content: [
-              {
-                type: "text",
-                text: content.text + " ",
-              },
-              { type: "sourceLink", attrs: source },
-            ],
-          },
-          { updateSelection: true },
-        );
+        };
+      }
+      if (!editor.isEmpty) {
+        editor.commands.insertContent(editorContent, { updateSelection: true });
+      } else {
+        editor.commands.setContent(editorContent, true);
       }
     },
     [],

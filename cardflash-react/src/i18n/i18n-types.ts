@@ -196,6 +196,10 @@ type RootTranslation = {
 	 * L​a​n​g​u​a​g​e​ ​S​e​l​e​c​t​o​r
 	 */
 	LANGUAGE_SELECTOR: string
+	/**
+	 * E​x​p​o​r​t​ ​D​a​t​a
+	 */
+	EXPORT_DATA: string
 	STUDY: {
 		/**
 		 * S​h​o​w​ ​A​n​s​w​e​r
@@ -478,6 +482,10 @@ export type TranslationFunctions = {
 	 * Language Selector
 	 */
 	LANGUAGE_SELECTOR: () => LocalizedString
+	/**
+	 * Export Data
+	 */
+	EXPORT_DATA: () => LocalizedString
 	STUDY: {
 		/**
 		 * Show Answer

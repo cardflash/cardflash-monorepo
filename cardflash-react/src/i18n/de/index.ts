@@ -67,6 +67,7 @@ const de = {
   OF_NUM_CARDS_DONE: "{numDone} von {numTotal} Karteikarten gelernt",
   LANGUAGE: "Sprache",
   LANGUAGE_SELECTOR: "Ausgewählte Sprache",
+  EXPORT_DATA: "Daten Exportieren",
   STUDY: {
     SHOW_ANSWER: "Antwort anzeigen",
     QUESTION: "Frage",

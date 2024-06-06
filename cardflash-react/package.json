@@ -35,6 +35,7 @@
     "@tiptap/starter-kit": "^2.2.4",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
+    "fflate": "^0.8.2",
     "framer-motion": "^11.0.24",
     "idb": "^8.0.0",
     "katex": "^0.16.10",

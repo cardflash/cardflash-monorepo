@@ -70,6 +70,7 @@ const en = {
   OF_NUM_CARDS_DONE: "{numDone} of {numTotal} cards done",
   LANGUAGE: "Language",
   LANGUAGE_SELECTOR: "Language Selector",
+  EXPORT_DATA: "Export Data",
   STUDY: {
     SHOW_ANSWER: "Show Answer",
     QUESTION: "Question",

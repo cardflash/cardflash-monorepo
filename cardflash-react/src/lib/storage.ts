@@ -39,9 +39,9 @@ export async function createPDFDocument(data: {
   return doc;
 }
 
-export async function putAttachment(id: string, blob: Blob){
+export async function putAttachment(id: string, blob: Blob) {
   const db = await initDB();
-  return await db.put("attachments",blob,id);
+  return await db.put("attachments", blob, id);
 }
 
 export async function listPDFDocumentsForCollection(collectionID: string) {
@@ -211,10 +211,10 @@ export async function deletePDFDocument(id: string): Promise<void> {
     id,
   );
   await Promise.all(keys.map((k) => db.delete("flashcards", k)));
-  const doc = await db.get("documents",id);
+  const doc = await db.get("documents", id);
   await db.delete("documents", id);
-  if(doc?.attachmentID != null){
-    await db.delete("attachments",doc?.attachmentID)
+  if (doc?.attachmentID != null) {
+    await db.delete("attachments", doc?.attachmentID);
   }
 }
 

@@ -110,13 +110,19 @@ const CardStack = ({
     }
     setCards(newCards.map(({ inner }) => inner));
   }
-
-  // TODO: Update scoring
-  const [cards, setCards] = useState(
-    items
-      .map((card) => ({ card, localScore: getLocalScore(card) }))
-      .filter(({ localScore }) => localScore < 1),
+  const memoItems = useMemo(
+    () =>
+      items
+        // TODO: Update scoring
+        .map((card) => ({ card, localScore: getLocalScore(card) }))
+        .filter(({ localScore }) => localScore < 1)
+        .map((c) => {
+          console.log("useState");
+          return c;
+        }),
+    [items],
   );
+  const [cards, setCards] = useState(memoItems);
   const [flipped, setFlipped] = useState(false);
 
   const totalNumberOfCards = useMemo(() => {

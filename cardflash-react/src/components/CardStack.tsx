@@ -232,11 +232,19 @@ const CardStack = ({
             variant="outline"
             className="mt-2 flex mx-auto gap-x-1.5"
             onClick={() => {
-              const newCards = [...cards]
+              const firstCards = cards
+                .slice(0, MAX_NUMBER_OF_CARDS_SHOWN)
                 .filter((c) => c.localScore < 1)
                 .map((inner) => ({ inner, random: Math.random() }));
-              newCards.sort((a, b) => a.random - b.random);
-              setCards(newCards.map(({ inner }) => inner));
+              firstCards.sort((a, b) => a.random - b.random);
+              const laterCards = cards
+                .slice(MAX_NUMBER_OF_CARDS_SHOWN)
+                .map((inner) => ({ inner, random: Math.random() }));
+              laterCards.sort((a, b) => a.random - b.random);
+              setCards([
+                ...firstCards.map(({ inner }) => inner),
+                ...laterCards.map(({ inner }) => inner),
+              ]);
               setFlipped(false);
             }}
           >

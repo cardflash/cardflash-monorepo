@@ -295,9 +295,29 @@ function AnswerBar(props: {
   onFlip: () => unknown;
 }) {
   const [selected, setSelected] = useState<AnswerOption>();
+  const showAnswerButton = useRef<HTMLButtonElement>(null);
   const { LL } = useI18nContext();
+
+  useEffect(() => {
+    showAnswerButton.current?.focus();
+  }, []);
   return (
-    <div className="h-[5rem] relative text-center">
+    <div
+      className="h-[5rem] relative text-center"
+      onKeyUpCapture={(ev) => {
+        console.log(ev);
+        const number = parseInt(ev.key);
+        if (
+          isFinite(number) &&
+          number >= 1 &&
+          number <= ANSWER_OPTIONS.length
+        ) {
+          const answerOption = ANSWER_OPTIONS[number - 1];
+          setSelected(answerOption.name);
+          props.onAnswer(answerOption.name);
+        }
+      }}
+    >
       <motion.div
         className={clsx(
           "z-10 absolute w-full h-[5rem] pt-4 ",
@@ -309,6 +329,7 @@ function AnswerBar(props: {
         transition={{ duration: props.show ? 0.1 : 0.5 }}
       >
         <Button
+          ref={showAnswerButton}
           size="lg"
           className="w-full max-w-sm h-[3.5rem]"
           onClick={() => {
@@ -329,6 +350,7 @@ function AnswerBar(props: {
       >
         {ANSWER_OPTIONS.map((answerOption) => (
           <motion.button
+            disabled={!props.show}
             key={answerOption.name}
             className={clsx(
               "z-20 flex flex-col items-center w-[4.5rem] text-xs font-semibold p-2 rounded-lg border",
@@ -359,14 +381,13 @@ function AnswerBar(props: {
             onClick={() => {
               setSelected(answerOption.name);
               props.onAnswer(answerOption.name);
+              showAnswerButton.current?.focus();
             }}
           >
-            {answerOption.icon({
-              size: 32,
-              // Note: Those only work because they are also used above;
-              // Otherwise tailwind would not pick them up
-              className: "text-[var(--color-bg-dark)] dark:text-[var(--color)]",
-            })}
+            <answerOption.icon
+              size={32}
+              className="text-[var(--color-bg-dark)] dark:text-[var(--color)]"
+            />
             {LL.STUDY.ANSWER_OPTIONS[answerOption.name]()}
           </motion.button>
         ))}

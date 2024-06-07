@@ -27,13 +27,15 @@ function getStudyDate(d: Date) {
   return new Date(d.toDateString());
 }
 
-function getUTCDate(d: Date) {
-  return Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
+function getDate(d: Date) {
+  // TODO: Decide whether to use UTC here
+  // return Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
+  return new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
 }
 
 function daysBetween(d1: Date, d2: Date) {
-  const utc1 = getUTCDate(d1);
-  const utc2 = getUTCDate(d2);
+  const utc1 = getDate(d1);
+  const utc2 = getDate(d2);
   return Math.round((utc2 - utc1) / (1000 * 60 * 60 * 24));
 }
 
@@ -45,6 +47,9 @@ function getLocalScore(card: Flashcard, studyAhead = 0) {
     Math.min(Math.pow(1.5, card.scheduling.score), 13 * 1.5) / (dayDiff * 1.5),
     card.scheduling.score,
   );
+  // For debugging/tweaking score
+  // TODO: Remove at some point
+  console.log({ card, expScore, dayDiff, score: card.scheduling.score });
   // If last updated today
   if (dayDiff === 0 && card.scheduling.score >= 1.0) {
     return 1;

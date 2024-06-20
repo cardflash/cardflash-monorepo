@@ -14,6 +14,7 @@ function Study() {
   const { isPending, error, data } = useQuery({
     queryKey: ["flashcards"],
     queryFn: () => listFlashcards(),
+    refetchOnWindowFocus: false
   });
 
   if (isPending) return "Loading...";

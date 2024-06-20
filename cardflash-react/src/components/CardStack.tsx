@@ -306,6 +306,9 @@ function AnswerBar(props: {
       className="h-[5rem] relative text-center"
       onKeyUpCapture={(ev) => {
         console.log(ev);
+        if(ev.ctrlKey || ev.shiftKey || ev.metaKey){
+          return;
+        }
         const number = parseInt(ev.key);
         if (
           isFinite(number) &&

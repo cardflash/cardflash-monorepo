@@ -103,13 +103,20 @@ const CardStack = ({
     updateFlashcard(info.card);
 
     const newCards = cards.filter((c) => c.localScore < 1);
-    let newIndex = Math.floor(newCards.length * Math.random());
-    if (newIndex <= 2) {
-      newIndex = newCards.length - 1;
+    // Finished all cards?
+    if (newCards.length > 0) {
+      // If current card is learned (i.e., has a local score > 1) we can do not need to do anything further...
+      if (newCards[0].card.id == info.card.id) {
+        // ...otherwise shuffle the card back in (if possible, not within the first 3 next cards)
+        let newIndex = Math.floor(newCards.length * Math.random());
+        if (newIndex <= 2) {
+          newIndex = newCards.length - 1;
+        }
+        const nextCard = newCards[newIndex];
+        newCards[newIndex] = { ...info };
+        newCards[0] = { ...nextCard };
+      }
     }
-    const nextCard = newCards[newIndex];
-    newCards[newIndex] = { ...info };
-    newCards[0] = { ...nextCard };
     setCards([...newCards]);
   }
   const memoItems = useMemo(
@@ -307,7 +314,6 @@ function AnswerBar(props: {
     <div
       className="h-[5rem] relative text-center"
       onKeyUpCapture={(ev) => {
-        console.log(ev);
         if (ev.ctrlKey || ev.shiftKey || ev.metaKey) {
           return;
         }

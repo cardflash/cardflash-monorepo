@@ -101,14 +101,16 @@ const CardStack = ({
     info.card.scheduling = { score: newGlobalScore, lastReview: Date.now() };
     info.localScore = newScore;
     updateFlashcard(info.card);
-    const newCards = [...cards]
-      .filter((c) => c.localScore < 1)
-      .map((inner) => ({ inner, random: Math.random() }));
-    newCards.sort((a, b) => a.random - b.random);
-    if (newCards.length > 0 && newCards[0].inner.card.id === info.card.id) {
-      newCards.push(newCards.shift()!);
+
+    const newCards = cards.filter((c) => c.localScore < 1);
+    let newIndex = Math.floor(newCards.length * Math.random());
+    if (newIndex <= 2) {
+      newIndex = newCards.length - 1;
     }
-    setCards(newCards.map(({ inner }) => inner));
+    const nextCard = newCards[newIndex];
+    newCards[newIndex] = { ...info };
+    newCards[0] = { ...nextCard };
+    setCards([...newCards]);
   }
   const memoItems = useMemo(
     () =>
@@ -167,7 +169,7 @@ const CardStack = ({
       <div className="relative h-64 sm:h-52 md:h-60 xl:h-[21rem] w-[25rem] mx-auto max-w-full sm:mx-auto sm:w-80md:w-96 xl:w-[32rem] mt-[4rem]">
         {cards.length === 0 && <div>{LL.STUDY.NO_CARDS()}</div>}
         {cards.map(({ card }, index) =>
-          index > MAX_NUMBER_OF_CARDS_SHOWN ? null : (
+          index > MAX_NUMBER_OF_CARDS_SHOWN || card == null ? null : (
             <motion.div
               key={card.id}
               className="absolute flex flex-col justify-between w-full h-full"
@@ -306,7 +308,7 @@ function AnswerBar(props: {
       className="h-[5rem] relative text-center"
       onKeyUpCapture={(ev) => {
         console.log(ev);
-        if(ev.ctrlKey || ev.shiftKey || ev.metaKey){
+        if (ev.ctrlKey || ev.shiftKey || ev.metaKey) {
           return;
         }
         const number = parseInt(ev.key);

@@ -13,8 +13,13 @@ function Study() {
 
   const { isPending, error, data } = useQuery({
     queryKey: ["flashcards"],
-    queryFn: () => listFlashcards(),
-    refetchOnWindowFocus: false
+    queryFn: () =>
+      listFlashcards().then((data) => {
+        const newData = data.map((inner) => ({ inner, random: Math.random() }));
+        newData.sort((a, b) => a.random - b.random);
+        return newData.map(({ inner }) => inner);
+      }),
+    refetchOnWindowFocus: false,
   });
 
   if (isPending) return "Loading...";

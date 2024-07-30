@@ -339,12 +339,13 @@ export default function InsidePDFIFrameWrapper(
               data-ignore-ev
               onClick={(ev) => {
                 ev.preventDefault();
+                let text = props.iframeWindow.document.getSelection()?.toString() ?? "";
+                // Replace linebreaks and umlauts
+                text = text.replaceAll("-\n","").replaceAll(" ̈u","ü").replaceAll(" ̈o","ö").replaceAll(" ̈a","ä")
                 props.addContent(
                   {
                     type: "text",
-                    text:
-                      props.iframeWindow.document.getSelection()?.toString() ??
-                      "-",
+                    text
                   },
                   {
                     documentID: props.documentID,

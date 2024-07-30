@@ -45,10 +45,7 @@ export const FlashCardEditor = forwardRef<
         ];
       } else if (content.type === "text") {
         editorContent = {
-          type: "heading",
-          attrs: {
-            level: 2,
-          },
+          type: "paragraph",
           content: [
             {
               type: "text",
@@ -103,7 +100,7 @@ export const FlashCardEditor = forwardRef<
   ]);
   return (
     <div>
-      <div className="flex flex-col lg:flex-row gap-1 w-full justify-center items-center lg:items-start max-w-xl lg:max-w-5xl mx-auto px-2">
+      <div className="flex flex-col xl:flex-row gap-1 w-full justify-center items-center xl:items-start max-w-xl lg:max-w-5xl mx-auto px-2">
         <div className="h-full w-full">
           <Label className="mx-auto text-xl w-fit block mb-1">
             {LL.CARD_EDITOR.FRONT()}

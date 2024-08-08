@@ -157,12 +157,20 @@ function SingleCollectionPage() {
           <p>
             {data.counts.numFlashcards} {LL.CARDS()}
           </p>
+          <div className="flex flex-wrap gap-2">
           <Link
             to="/collections/$collectionID/study"
             params={{ collectionID: collectionID }}
           >
             <Button variant="outline">{LL.STUDY_ALL()}</Button>
           </Link>
+          <Link
+            to="/collections/$collectionID/cards"
+            params={{ collectionID: collectionID }}
+          >
+            <Button variant="outline">{LL.VIEW_ALL()}</Button>
+          </Link>
+          </div>
           <CollectionDocuments collection={data.collection} />
         </div>
       )}

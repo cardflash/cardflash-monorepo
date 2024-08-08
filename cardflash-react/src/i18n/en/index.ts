@@ -66,6 +66,7 @@ const en = {
   CARDS: "Cards",
   CARDS_FOR: "Flashcards for",
   STUDY_ALL: "Study all",
+  VIEW_ALL: "View all",
   NUM_CARDS_SCHEDULED: "{0} cards scheduled",
   OF_NUM_CARDS_DONE: "{numDone} of {numTotal} cards done",
   LANGUAGE: "Language",

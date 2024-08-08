@@ -27,6 +27,9 @@ const CollectionsCollectionIDLazyImport = createFileRoute(
 const CollectionsCollectionIDStudyLazyImport = createFileRoute(
   '/collections/$collectionID/study',
 )()
+const CollectionsCollectionIDCardsLazyImport = createFileRoute(
+  '/collections/$collectionID/cards',
+)()
 
 // Create/Update Routes
 
@@ -68,6 +71,16 @@ const CollectionsCollectionIDStudyLazyRoute =
     ),
   )
 
+const CollectionsCollectionIDCardsLazyRoute =
+  CollectionsCollectionIDCardsLazyImport.update({
+    path: '/collections/$collectionID/cards',
+    getParentRoute: () => rootRoute,
+  } as any).lazy(() =>
+    import('./routes/collections_/$collectionID_/cards.lazy').then(
+      (d) => d.Route,
+    ),
+  )
+
 const CollectionsDocumentsDocIDRoute = CollectionsDocumentsDocIDImport.update({
   path: '/collections/documents/$docID',
   getParentRoute: () => rootRoute,
@@ -103,6 +116,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CollectionsDocumentsDocIDImport
       parentRoute: typeof rootRoute
     }
+    '/collections/$collectionID/cards': {
+      preLoaderRoute: typeof CollectionsCollectionIDCardsLazyImport
+      parentRoute: typeof rootRoute
+    }
     '/collections/$collectionID/study': {
       preLoaderRoute: typeof CollectionsCollectionIDStudyLazyImport
       parentRoute: typeof rootRoute
@@ -119,6 +136,7 @@ export const routeTree = rootRoute.addChildren([
   StudyLazyRoute,
   CollectionsCollectionIDLazyRoute,
   CollectionsDocumentsDocIDRoute,
+  CollectionsCollectionIDCardsLazyRoute,
   CollectionsCollectionIDStudyLazyRoute,
 ])
 

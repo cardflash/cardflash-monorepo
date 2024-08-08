@@ -178,6 +178,10 @@ type RootTranslation = {
 	 */
 	STUDY_ALL: string
 	/**
+	 * V​i​e​w​ ​a​l​l
+	 */
+	VIEW_ALL: string
+	/**
 	 * {​0​}​ ​c​a​r​d​s​ ​s​c​h​e​d​u​l​e​d
 	 * @param {unknown} 0
 	 */
@@ -466,6 +470,10 @@ export type TranslationFunctions = {
 	 * Study all
 	 */
 	STUDY_ALL: () => LocalizedString
+	/**
+	 * View all
+	 */
+	VIEW_ALL: () => LocalizedString
 	/**
 	 * {0} cards scheduled
 	 */

@@ -37,9 +37,11 @@ function Settings() {
             <>
               <Button
                 disabled={loading}
-                onClick={async () => {
+                onClick={async (ev) => {
+                  const compressHeavily = ev.shiftKey;
                   setLoading(true);
                   const zipData: AsyncZippable = {};
+                  console.time("list");
                   for (const c of await listCollections()) {
                     zipData[`collections/${c.id}.json`] = strToU8(
                       JSON.stringify(c),
@@ -62,21 +64,28 @@ function Settings() {
                       ).replace("/", ".")}`
                     ] = new Uint8Array(await a.data!.arrayBuffer());
                   }
-                  zip(zipData, {}, (err, data) => {
-                    const blob = new Blob([data], {
-                      type: "application/x-zip",
-                    });
-                    const blobURL = URL.createObjectURL(blob);
-                    const a = document.createElement("a");
-                    document.body.appendChild(a);
-                    a.download = new Date().toISOString() + "_cardflash.zip";
-                    a.href = blobURL;
-                    a.click();
-                    document.body.removeChild(a);
-                    URL.revokeObjectURL(blobURL);
-                    setLoading(false);
-                    navigate;
-                  });
+                  console.timeEnd("list");
+                  console.time("zip");
+                  zip(
+                    zipData,
+                    { level: compressHeavily ? 8 : 0, consume: true },
+                    (err, data) => {
+                      console.timeEnd("zip");
+                      const blob = new Blob([data], {
+                        type: "application/x-zip",
+                      });
+                      const blobURL = URL.createObjectURL(blob);
+                      const a = document.createElement("a");
+                      document.body.appendChild(a);
+                      a.download = new Date().toISOString() + "_cardflash.zip";
+                      a.href = blobURL;
+                      a.click();
+                      document.body.removeChild(a);
+                      URL.revokeObjectURL(blobURL);
+                      setLoading(false);
+                      navigate;
+                    },
+                  );
                 }}
               >
                 {LL.EXPORT_DATA()}
@@ -92,11 +101,11 @@ function Settings() {
                       {},
                       async (err, data) => {
                         const keys = Object.keys(data);
-                        console.log({ data, keys });
+                        // console.log({ data, keys });
                         for (const path of keys) {
                           const array = data[path];
                           const [folder, filename] = path.split("/");
-                          console.log({ filename, path });
+                          // console.log({ filename, path });
                           const [key, extension] = filename.split("___");
                           if (folder === "collections") {
                             await updateCollection(

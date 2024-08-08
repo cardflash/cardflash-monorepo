@@ -29,6 +29,7 @@ import { Link, createLazyFileRoute, useNavigate } from "@tanstack/react-router";
 import type { Editor } from "@tiptap/core";
 import clsx from "clsx";
 import { motion } from "framer-motion";
+import { Timeout } from "node_modules/@tanstack/react-router/dist/esm/utils";
 import { PDFPageView } from "pdfjs-dist/types/web/pdf_page_view";
 import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { FiEdit, FiTrash } from "react-icons/fi";
@@ -40,7 +41,7 @@ export const Route = createLazyFileRoute("/collections/documents/$docID")({
 
 function SingleDocPage() {
   const { docID } = Route.useParams();
-  const { source } = Route.useSearch();
+  const { source, scrollToCard } = Route.useSearch();
   const { isPending, error, data } = useQuery({
     queryKey: [`pdf-document-${docID}`],
     queryFn: async () => {
@@ -72,6 +73,7 @@ function SingleDocPage() {
           objectURL={data.objectURL}
           docID={docID}
           source={source}
+          scrollToCard={scrollToCard}
         />
       </div>
     </>
@@ -85,11 +87,13 @@ function SingleDocumentViewInner({
   docID,
   doc,
   source,
+  scrollToCard
 }: {
   objectURL: string;
   docID: string;
   doc: PDFDocument;
   source?: SourceLinkAttributes | undefined;
+  scrollToCard?: {id: string}
 }) {
   const { LL } = useI18nContext();
   const [activeTab, setActiveTab] = useState<
@@ -155,7 +159,7 @@ function SingleDocumentViewInner({
     setActiveTab((tab) => {
       if (tab === "cards") {
         tabChanged = true;
-        return window.innerWidth > 1024 ? "combined" : "pdf-viewer";
+        return window.innerWidth > 1024 ? "combined" : scrollToCard ? "cards" : "pdf-viewer";
       } else {
         return tab;
       }
@@ -249,6 +253,21 @@ function SingleDocumentViewInner({
     },
     [],
   );
+
+  useEffect(() => {
+    let t: Timeout|undefined;
+    if(scrollToCard){
+      t = setTimeout(() => {
+        document.getElementById(`card-${scrollToCard.id}`)?.scrollIntoView({behavior: "smooth", block: "start"
+        });
+      },500)
+    }
+    return () => {
+      if(t){
+        clearTimeout(t);
+      }
+    }
+  },[scrollToCard])
 
   if (isPending) return "Loading...";
 
@@ -485,7 +504,7 @@ function SingleDocumentViewInner({
               {/* <h2 className="text-xl font-medium text-center mt-8">{LL.CARDS()}</h2> */}
               <div className="flex flex-col items-center gap-4">
                 {cardData.cards.map((card, i) => (
-                  <div
+                  <div id={`card-${card.id}`}
                     key={card.id}
                     className="h-64 sm:h-52 md:h-60 xl:h-[21rem] w-[25rem] mx-auto max-w-full sm:mx-auto sm:w-80md:w-96 xl:w-[32rem] relative"
                     onClick={() => {

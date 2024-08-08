@@ -12,6 +12,7 @@ const docSearchParamsSchema = z.object({
       documentID: z.string(),
     })
     .optional(),
+    scrollToCard: z.object({id: z.string()}).optional(),
 });
 
 export const Route = createFileRoute("/collections/documents/$docID")({

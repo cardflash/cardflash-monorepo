@@ -63,6 +63,7 @@ const de = {
   CARDS: "Karteikarten",
   CARDS_FOR: "Karteikarten für",
   STUDY_ALL: "Alle lernen",
+  VIEW_ALL: "Alle ansehen",
   NUM_CARDS_SCHEDULED: "{0} Karteikarten geplant",
   OF_NUM_CARDS_DONE: "{numDone} von {numTotal} Karteikarten gelernt",
   LANGUAGE: "Sprache",

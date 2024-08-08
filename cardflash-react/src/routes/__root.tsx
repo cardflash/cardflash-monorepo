@@ -72,7 +72,7 @@ function Root() {
           </nav>
         </div>
         {/* Mobile: */}
-        <div className="h-[4rem]">
+        <div className="h-[4rem] block lg:hidden">
           <div className="border-t border-gray-400 dark:border-gray-700 lg:hidden">
             <nav className="flex justify-around items-center gap-x-2 h-[4rem]">
               {LINKS.map((link) => (

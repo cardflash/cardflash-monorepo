@@ -42,7 +42,7 @@ html,
 body {
   height: 100%;
   width: 100%;
-  overflow: hidden;
+  /* overflow: hidden; */
 }
 html {
   overscroll-behavior: contain;
@@ -88,7 +88,7 @@ html {
 }
 
 .editor-prose {
-  @apply prose prose-p:text-black dark:prose-p:text-white dark:prose-invert prose-headings:mb-0 prose-headings:mt-0 prose-pre:my-2 prose-img:my-1 prose-p:mb-0 prose-p:mt-0 prose-li:mt-0 prose-li:mb-0 prose-ul:mt-0 prose-ul:mb-0;
+  @apply  mx-auto prose prose-p:text-black dark:prose-p:text-white dark:prose-invert prose-headings:mb-0 prose-headings:mt-0 prose-pre:my-2 prose-img:my-1 prose-p:mb-0 prose-p:mt-0 prose-li:mt-0 prose-li:mb-0 prose-ul:mt-0 prose-ul:mb-0;
 }
 .editor-prose em {
   @apply font-semibold;

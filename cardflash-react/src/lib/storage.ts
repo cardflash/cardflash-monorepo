@@ -254,6 +254,8 @@ export async function getCardsForCollection(id: string): Promise<Flashcard[]> {
   const flashcards = (
     await Promise.all(keys.map((key) => txIndex.getAll(key)))
   ).flat();
+
+  flashcards.sort((a, b) => b.created - a.created);
   return flashcards;
 }
 

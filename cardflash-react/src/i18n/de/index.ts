@@ -34,7 +34,7 @@ const de = {
         "<h2>Kann ich die Sprache vom Interface ändern?</h2>",
       back: `<p>Na klar! In den <a href="/settings">Einstellungen</a> kannst du die Sprache ändern.
       <br/>
-      Momentan sind Deutsch und Englisch als Sprachen verfügbar.</p>`,
+      Momentan sind Deutsch, Englisch und Traditionelles Chinesisch als Sprachen verfügbar.</p>`,
     },
   },
   HOME: {

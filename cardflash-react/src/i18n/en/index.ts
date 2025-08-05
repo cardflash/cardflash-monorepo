@@ -38,7 +38,7 @@ const en = {
         "<h2>Can I change the interface language?</h2>",
       back: `<p>Sure thing! Head over to the <a href="/settings">settings</a> to change the language.
       <br/>
-      Currently, English and German are available.</p>`,
+      Currently, English, German and Traditional Chinese are available.</p>`,
     },
   },
   HOME: {

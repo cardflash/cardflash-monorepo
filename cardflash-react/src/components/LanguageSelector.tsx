@@ -9,7 +9,11 @@ import { Label } from "@/components/ui/label";
 import { useI18nContext } from "@/i18n/i18n-react";
 import { loadLocale } from "@/i18n/i18n-util.sync";
 import { Locales } from "@/i18n/i18n-types";
-const LOCALES = { en: "English", de: "Deutsch" };
+const LOCALES = {
+  en: "English",
+  de: "Deutsch",
+  "zh-Hant": "繁體中文",
+};
 export const LOCAL_STORAGE_LANG_KEY = "cardflash-lang-storage";
 export default function LanguageSelector() {
   const { setLocale, locale, LL } = useI18nContext();

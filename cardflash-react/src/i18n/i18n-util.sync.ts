@@ -7,10 +7,12 @@ import { loadedFormatters, loadedLocales, locales } from './i18n-util.js'
 
 import de from './de/index.js'
 import en from './en/index.js'
+import zh_Hant from './zh-Hant/index.js'
 
 const localeTranslations = {
 	de,
 	en,
+	'zh-Hant': zh_Hant,
 }
 
 export const loadLocale = (locale: Locales): void => {
